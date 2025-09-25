@@ -1,9 +1,37 @@
-# Bitcoin Strategy Comparison Tool
+# Bitcoin DCA Strategy Comparison Tool
 [中文版](README_zh.md)
 
 <div align="center"><h1><a href=https://dca.btc.sv>Online Demo</a></h1></div>
 
 A React-based web application for comparing different Bitcoin dollar-cost averaging strategies. Supports simulation and comparison of three strategies: standard DCA, dynamic DCA, and value averaging.
+
+## About DCA
+
+### Why DCA?
+- You believe in the long-term value of BTC, but want to avoid the timing risk of a lump-sum investment by spreading out your entry points and reducing overall risk.
+- You believe in the long-term value of BTC, but have limited funds and prefer to build your position gradually.
+- Even if you don't fully understand BTC, you want to take advantage of its volatility to accumulate some BTC at relatively lower prices.
+...
+
+### Three Strategies
+1. Standard DCA: Invest a fixed amount at a fixed interval (e.g., $500 every week).
+- Pros: Easiest to execute; most exchanges support it directly; just automate the regular transfer.
+- Cons: Same amount regardless of price level, which can lead to a higher average cost in strong uptrends.
+
+2. Dynamic DCA: Add a light timing layer on top of Standard DCA, commonly using RSI. Invest less when most people are buying (RSI high) and more when most people are selling (RSI low).
+- Pros: Lowers average entry price; typically results in smaller drawdowns during market dips.
+- Cons: Requires calculating how much to invest each time (a small tool or script helps).
+
+3. Value Averaging (VA): Target portfolio value increases by a fixed amount (e.g., +$500 per week). If price drops, buy more to catch up; if price rises, buy less or even sell the “excess.”
+- Pros: Functions like a passive buy-low/sell-high mechanism; in prolonged ranges, it can lower the cost basis quickly; simple math.
+- Cons: Can demand large capital during sharp selloffs (hard to execute on a budget); during powerful rallies, it can force selling and reduce BTC stack. A practical improvement is to cap the maximum buy/sell per period.
+
+### When to Stop
+- Fiat-denominated: For example, stop when total invested capital reaches $100,000.
+- BTC-denominated: For example, stop once you accumulate 1 BTC.
+- Strategic take-profit: With VA, if a long uptrend drives your cost basis extremely low (even near zero), consider taking profit and starting a new DCA cycle.
+
+The biggest enemy of DCA is not the market, but giving up halfway. The key is to choose a strategy that you feel comfortable with, and stick to it as naturally as eating or sleeping.
 
 ## Features
 
@@ -109,6 +137,7 @@ Click the "Run Simulation" button, and the system will calculate the performance
 - Goal: Portfolio value increases by a fixed amount weekly
 - Buy when below target, sell when above target
 - Set buy/sell limits to avoid extreme operations
+
 
 ## Data Description
 
