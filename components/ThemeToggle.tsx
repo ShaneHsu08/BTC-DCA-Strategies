@@ -20,7 +20,7 @@ export const ThemeToggle: React.FC = () => {
     return (
         <Button
             onClick={toggleTheme}
-            className="bg-transparent hover:bg-muted/50 p-2 h-auto"
+            className="bg-transparent hover:bg-muted focus-visible:bg-muted p-0 h-10 w-10"
             aria-label="Toggle theme"
         >
             {theme === 'dark' ? 

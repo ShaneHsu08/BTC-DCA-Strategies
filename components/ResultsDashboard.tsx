@@ -22,14 +22,19 @@ const LoadingSpinner: React.FC = () => (
 const InitialState: React.FC = () => {
     const { t } = useLanguage();
     return (
-     <Card className="h-full flex flex-col justify-center items-center text-center">
-        <CardHeader>
+     <Card className="h-full flex flex-col justify-center items-center text-center p-10 border-dashed">
+        <div className="mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
+                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+        </div>
+        <CardHeader className="p-0">
             <CardTitle>{t('results.initialState.title')}</CardTitle>
-            <CardDescription>
+            <CardDescription className="mt-2">
                 {t('results.initialState.description')}
             </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 mt-4">
             <p className="text-muted-foreground">{t('results.initialState.details')}</p>
         </CardContent>
     </Card>
@@ -49,6 +54,8 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
     
     const bestBtcAccumulated = Math.max(...results.map(r => r.metrics.totalBtcAccumulated));
     const bestRoi = Math.max(...results.map(r => r.metrics.roiPercentage));
+    const mostEfficient = Math.min(...results.map(r => r.metrics.totalUsdInvested));
+    const lowestDrawdown = Math.min(...results.map(r => r.metrics.maxDrawdown));
 
     const getStrategyName = (strategyKey: string) => getTranslatedStrategyName(strategyKey, language);
 
@@ -67,13 +74,13 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                 />
                 <MetricCard 
                     title={t('results.metrics.mostCapitalEfficient')}
-                    value={`$${Math.min(...results.map(r => r.metrics.totalUsdInvested)).toLocaleString()}`} 
-                    description={getStrategyName(results.find(r => r.metrics.totalUsdInvested === Math.min(...results.map(r => r.metrics.totalUsdInvested)))?.strategyName || '')} 
+                    value={`$${mostEfficient.toLocaleString()}`} 
+                    description={getStrategyName(results.find(r => r.metrics.totalUsdInvested === mostEfficient)?.strategyName || '')} 
                 />
                 <MetricCard 
                     title={t('results.metrics.lowestDrawdown')}
-                    value={`${Math.min(...results.map(r => r.metrics.maxDrawdown)).toFixed(2)}%`}
-                    description={getStrategyName(results.find(r => r.metrics.maxDrawdown === Math.min(...results.map(r => r.metrics.maxDrawdown)))?.strategyName || '')} 
+                    value={`${lowestDrawdown.toFixed(2)}%`}
+                    description={getStrategyName(results.find(r => r.metrics.maxDrawdown === lowestDrawdown)?.strategyName || '')} 
                 />
             </div>
             

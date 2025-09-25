@@ -10,7 +10,7 @@ interface PortfolioChartProps {
     dataKey: 'portfolioValue' | 'btcAccumulated' | 'averageCostBasis';
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f97316'];
+const COLORS = ['#3b82f6', '#22c55e', '#a855f7'];
 
 export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey }) => {
     const { language, getLocale } = useLanguage();
@@ -42,7 +42,10 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
             if (language === 'ja') {
                 return `¥${(value / 10000).toFixed(0)}万`;
             }
-            return `$${(value / 1000).toFixed(0)}k`;
+            if (Math.abs(value) >= 1000) {
+                 return `$${(value / 1000).toFixed(0)}k`;
+            }
+            return `$${value.toFixed(0)}`;
         }
         : (value: number) => value.toFixed(2);
         
@@ -54,11 +57,11 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
         <div className="h-80 w-full">
             <ResponsiveContainer>
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis 
                         dataKey="date" 
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }} 
-                        stroke="#404040"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                        stroke="hsl(var(--border))"
                         tickFormatter={(str) => {
                             const date = new Date(str);
                             // Use a locale-sensitive date format
@@ -66,17 +69,17 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                         }}
                     />
                     <YAxis 
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }} 
-                        stroke="#404040"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                        stroke="hsl(var(--border))"
                         tickFormatter={yAxisFormatter}
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: 'rgba(20, 20, 20, 0.9)',
-                            borderColor: '#404040',
-                            borderRadius: '0.5rem'
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: 'var(--radius)'
                         }}
-                        labelStyle={{ color: '#f4f4f5' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))' }}
                         formatter={tooltipFormatter}
                     />
                     <Legend wrapperStyle={{fontSize: '14px'}} />

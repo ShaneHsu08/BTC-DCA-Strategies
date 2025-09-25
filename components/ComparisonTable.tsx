@@ -16,7 +16,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
         const values = results.map(r => r.metrics[metric]);
         const isMinBest = metric === 'averageCostBasis' || metric === 'maxDrawdown';
         const bestValue = isMinBest ? Math.min(...values) : Math.max(...values);
-        return value === bestValue ? 'text-primary font-bold' : '';
+        return value === bestValue ? 'text-primary font-semibold' : '';
     };
 
     return (
@@ -87,7 +87,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
                                     </td>
                                 ))}
                             </tr>
-                            <tr>
+                            <tr className="border-b-0">
                                 <td className="p-4">{t('results.table.maxDrawdown')}</td>
                                 {results.map(r => (
                                     <td key={r.strategyName} className={`p-4 text-right ${getBestClass('maxDrawdown', r.metrics.maxDrawdown)}`}>

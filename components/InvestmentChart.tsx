@@ -9,7 +9,7 @@ interface InvestmentChartProps {
     data: StrategyResult[];
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f97316'];
+const COLORS = ['#3b82f6', '#22c55e', '#a855f7'];
 
 export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
     const { language, getLocale } = useLanguage();
@@ -44,34 +44,34 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
         <div className="h-80 w-full">
             <ResponsiveContainer>
                 <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis 
                         dataKey="date" 
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }} 
-                        stroke="#404040"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                        stroke="hsl(var(--border))"
                         tickFormatter={(str) => {
                             const date = new Date(str);
                             return date.toLocaleDateString(getLocale(), { year: '2-digit', month: 'short' });
                         }}
                     />
                     <YAxis 
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }} 
-                        stroke="#404040"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                        stroke="hsl(var(--border))"
                         tickFormatter={yAxisFormatter}
                         allowDataOverflow={true}
                         domain={['auto', 'auto']}
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: 'rgba(20, 20, 20, 0.9)',
-                            borderColor: '#404040',
-                            borderRadius: '0.5rem'
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: 'var(--radius)'
                         }}
-                        labelStyle={{ color: '#f4f4f5' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))' }}
                         formatter={(value: number) => formatCurrency(value, getLocale())}
                     />
                     <Legend wrapperStyle={{fontSize: '14px'}} />
-                    <ReferenceLine y={0} stroke="#a1a1aa" strokeDasharray="2 2" />
+                    <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 2" />
                     {translatedData.map((strategy, index) => (
                         <Bar
                             key={strategy.strategyName}

@@ -40,10 +40,10 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
             </CardHeader>
             <CardContent>
                 <TooltipProvider>
-                    <form onSubmit={(e) => { e.preventDefault(); onRunSimulation(); }} className="space-y-6">
+                    <form onSubmit={(e) => { e.preventDefault(); onRunSimulation(); }} className="space-y-8">
                         <div className="space-y-2">
                             <Label htmlFor="weeklyBudget">{t('form.weeklyBudget')}</Label>
-                            <Input id="weeklyBudget" name="weeklyBudget" type="number" value={params.weeklyBudget} onChange={handleChange} min="1" />
+                            <Input id="weeklyBudget" name="weeklyBudget" type="number" value={params.weeklyBudget} onChange={handleChange} min="1" className="text-base" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                             </div>
                         </div>
 
-                        <div className="border-t border-border pt-6 space-y-4">
+                        <div className="border-t border-border pt-8 space-y-4">
                             <h4 className="font-semibold text-card-foreground">{t('form.dynamicDcaTitle')}
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -107,7 +107,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                             </div>
                         </div>
 
-                        <div className="border-t border-border pt-6 space-y-4">
+                        <div className="border-t border-border pt-8 space-y-4">
                             <h4 className="font-semibold text-card-foreground">{t('form.valueAveragingTitle')}
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -134,7 +134,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full !mt-10 text-base font-semibold py-3 h-auto" disabled={isLoading}>
                             {isLoading ? t('form.simulatingButton') : t('form.runButton')}
                         </Button>
                     </form>

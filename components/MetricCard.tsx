@@ -15,8 +15,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({ title, value, descriptio
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-                <p className="text-xs text-primary">{description}</p>
+                <div className="text-3xl font-bold">{value}</div>
+                <p className="text-xs text-muted-foreground pt-1">{description}</p>
             </CardContent>
         </Card>
     );

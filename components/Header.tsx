@@ -22,18 +22,16 @@ export const Header: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <header className="border-b border-border">
+        <header>
             <div className="container mx-auto flex items-center justify-between p-4 md:p-6">
                 <div className="flex items-center space-x-3">
                     <BitcoinLogo className="w-8 h-8 text-orange-500" />
-                    <div className="flex flex-col">
-                        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                            {t('header.title')}
-                        </h1>
-                        <p className="text-sm md:text-base text-muted-foreground">
-                            {t('header.subtitle')}
-                        </p>
-                    </div>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                        {t('header.title')}
+                    </h1>
+                    <p className="text-sm md:text-base text-muted-foreground">
+                        {t('header.subtitle')}
+                    </p>
                 </div>
                 <div className="flex items-center space-x-2">
                     <LanguageSelector />
