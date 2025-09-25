@@ -1,0 +1,5 @@
+{
+  "name": "Bitcoin Strategy Comparison Tool",
+  "description": "An interactive tool to simulate and compare three major Bitcoin periodic investment strategies: Standard DCA, Dynamic DCA (RSI-based), and Value Averaging. Users can input parameters and visualize outcomes to make data-driven decisions.",
+  "requestFramePermissions": []
+}
