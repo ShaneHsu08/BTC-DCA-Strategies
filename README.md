@@ -1,4 +1,7 @@
 # Bitcoin Strategy Comparison Tool
+[中文版](README_zh.md)
+
+<div align="center"><h1><a href=https://dca.btc.sv>Online Demo</a></h1></div>
 
 A React-based web application for comparing different Bitcoin dollar-cost averaging strategies. Supports simulation and comparison of three strategies: standard DCA, dynamic DCA, and value averaging.
 

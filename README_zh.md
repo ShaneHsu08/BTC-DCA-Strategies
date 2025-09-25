@@ -1,5 +1,9 @@
 # 比特币策略比较工具
 
+[English](README.md)
+
+<div align="center"><h1><a href=https://dca.btc.sv>在线演示</a></h1></div>
+
 一个基于React的Web应用程序，用于比较不同的比特币定投策略。支持标准定投、动态定投和价值平均法三种策略的模拟和比较。
 
 ## 功能特性
