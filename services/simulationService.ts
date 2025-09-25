@@ -47,14 +47,18 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
     let sharpeRatio = 0;
     if (weeklyReturns.length > 1) {
         const meanReturn = weeklyReturns.reduce((acc, val) => acc + val, 0) / weeklyReturns.length;
-        const stdDev = Math.sqrt(
-            weeklyReturns.map(x => Math.pow(x - meanReturn, 2)).reduce((a, b) => a + b) / weeklyReturns.length
-        );
-
+        
+        // 使用样本标准差（除以n-1而不是n）
+        const variance = weeklyReturns
+            .map(x => Math.pow(x - meanReturn, 2))
+            .reduce((a, b) => a + b) / (weeklyReturns.length - 1);
+        const stdDev = Math.sqrt(variance);
+    
         if (stdDev > 0) {
-            // Assuming risk-free rate is 0
+            // 假设风险无风险利率为0（对于加密货币投资是合理的简化）
             const weeklySharpe = meanReturn / stdDev;
-            sharpeRatio = weeklySharpe * Math.sqrt(52); // Annualize
+            // 年化夏普比率：周夏普比率 × √52
+            sharpeRatio = weeklySharpe * Math.sqrt(52);
         }
     }
 

@@ -33,6 +33,12 @@ A React-based web application for comparing different Bitcoin dollar-cost averag
 
 The biggest enemy of DCA is not the market, but giving up halfway. The key is to choose a strategy that you feel comfortable with, and stick to it as naturally as eating or sleeping.
 
+## About This Application
+- Initial release includes BTC data from 2011-01-03 to 2025-09-15. Please select backtest dates within this range. The next version will support real-time data.
+- Transaction fees are not considered for now.
+- Results are for reference only.
+
+
 ## Features
 
 ### Core Features

@@ -79,14 +79,6 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.sharpeRatio')}</td>
-                                {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('sharpeRatio', r.metrics.sharpeRatio)}`}>
-                                        {formatNumber(r.metrics.sharpeRatio)}
-                                    </td>
-                                ))}
-                            </tr>
                             <tr className="border-b-0">
                                 <td className="p-4">{t('results.table.maxDrawdown')}</td>
                                 {results.map(r => (
