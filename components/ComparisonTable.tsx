@@ -16,73 +16,74 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
         const values = results.map(r => r.metrics[metric]);
         const isMinBest = metric === 'averageCostBasis' || metric === 'maxDrawdown';
         const bestValue = isMinBest ? Math.min(...values) : Math.max(...values);
-        return value === bestValue ? 'text-primary font-semibold' : '';
+        // Using neon green/emerald for positive bests, maybe lighter text for neutral
+        return value === bestValue ? 'text-emerald-500 font-bold' : 'text-muted-foreground';
     };
 
     return (
-        <Card>
+        <Card className="glass-panel">
             <CardHeader>
                 <CardTitle>{t('results.table.title')}</CardTitle>
                 <CardDescription>{t('results.table.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="w-full overflow-x-auto">
+                <div className="w-full overflow-x-auto rounded-lg border border-border/50">
                     <table className="w-full text-sm text-left">
-                        <thead className="border-b border-border">
+                        <thead className="bg-muted/50">
                             <tr>
-                                <th className="p-4 font-medium text-muted-foreground">{t('results.table.metric')}</th>
+                                <th className="p-4 font-medium text-muted-foreground uppercase tracking-wider text-xs">{t('results.table.metric')}</th>
                                 {results.map(result => (
-                                    <th key={result.strategyName} className="p-4 font-medium text-muted-foreground text-right">
+                                    <th key={result.strategyName} className="p-4 font-semibold text-foreground text-right">
                                         {getTranslatedStrategyName(result.strategyName, language)}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.finalValue')}</td>
+                        <tbody className="divide-y divide-border/50">
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.finalValue')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('finalPortfolioValue', r.metrics.finalPortfolioValue)}`}>
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('finalPortfolioValue', r.metrics.finalPortfolioValue)}`}>
                                         {formatCurrency(r.metrics.finalPortfolioValue, getLocale())}
                                     </td>
                                 ))}
                             </tr>
-                             <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.totalInvested')}</td>
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.totalInvested')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className="p-4 text-right">
+                                    <td key={r.strategyName} className="p-4 text-right font-mono text-muted-foreground">
                                         {formatCurrency(r.metrics.totalUsdInvested, getLocale())}
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.roi')}</td>
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.roi')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('roiPercentage', r.metrics.roiPercentage)}`}>
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('roiPercentage', r.metrics.roiPercentage)}`}>
                                         {formatPercentage(r.metrics.roiPercentage)}
                                     </td>
                                 ))}
                             </tr>
-                             <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.btcAccumulated')}</td>
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.btcAccumulated')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('totalBtcAccumulated', r.metrics.totalBtcAccumulated)}`}>
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('totalBtcAccumulated', r.metrics.totalBtcAccumulated)}`}>
                                         {formatBtc(r.metrics.totalBtcAccumulated)}
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="border-b border-border">
-                                <td className="p-4">{t('results.table.avgCost')}</td>
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.avgCost')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('averageCostBasis', r.metrics.averageCostBasis)}`}>
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('averageCostBasis', r.metrics.averageCostBasis)}`}>
                                         {formatCurrency(r.metrics.averageCostBasis, getLocale())}
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="border-b-0">
-                                <td className="p-4">{t('results.table.maxDrawdown')}</td>
+                            <tr className="hover:bg-muted/30 transition-colors">
+                                <td className="p-4 font-medium">{t('results.table.maxDrawdown')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right ${getBestClass('maxDrawdown', r.metrics.maxDrawdown)}`}>
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('maxDrawdown', r.metrics.maxDrawdown)}`}>
                                         {formatPercentage(r.metrics.maxDrawdown)}
                                     </td>
                                 ))}

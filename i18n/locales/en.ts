@@ -12,7 +12,7 @@ export const en = {
         dynamicDcaTitle: 'Dynamic DCA (RSI-Based)',
         dynamicDcaTooltip: 'Adjusts weekly budget based on the Relative Strength Index (RSI). <br/> - <strong>Low RSI (&lt;30):</strong> Market is oversold, buy more. <br/> - <strong>High RSI (&gt;70):</strong> Market is overbought, buy less.',
         rsiTierLabel: 'RSI Tier',
-        rsiThresholdLabel: 'RSI (<)',
+        rsiThresholdLabel: 'Threshold',
         budgetLabel: 'Budget ($)',
         rsiExtremeLow: 'Extreme Low',
         rsiLow: 'Low',

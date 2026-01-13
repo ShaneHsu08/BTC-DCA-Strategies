@@ -12,7 +12,7 @@ export const zh = {
         dynamicDcaTitle: '动态定投 (基于RSI)',
         dynamicDcaTooltip: '根据相对强弱指数(RSI)调整每周预算。<br/>- <strong>低RSI (&lt;30):</strong> 市场超卖，多买。<br/>- <strong>高RSI (&gt;70):</strong> 市场超买，少买。',
         rsiTierLabel: 'RSI 等级',
-        rsiThresholdLabel: 'RSI (<)',
+        rsiThresholdLabel: '阈值',
         budgetLabel: '预算 ($)',
         rsiExtremeLow: '极低',
         rsiLow: '低',

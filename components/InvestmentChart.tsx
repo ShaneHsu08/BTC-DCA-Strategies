@@ -9,7 +9,8 @@ interface InvestmentChartProps {
     data: StrategyResult[];
 }
 
-const COLORS = ['#3b82f6', '#22c55e', '#a855f7'];
+// Premium FinTech Palette: Electric Blue, Neon Green, Hot Pink
+const COLORS = ['#3b82f6', '#10b981', '#f43f5e'];
 
 export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
     const { language, getLocale } = useLanguage();
@@ -17,14 +18,14 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
     if (!data || data.length === 0) {
         return <div>No data to display.</div>;
     }
-    
+
     const translatedData = data.map(strategy => ({
         ...strategy,
         strategyName: getTranslatedStrategyName(strategy.strategyName, language)
     }));
-    
+
     const chartData = translatedData[0].timeSeries.map((_, index) => {
-        const point: { date: string; [key: string]: string | number } = {
+        const point: { date: string;[key: string]: string | number } = {
             date: translatedData[0].timeSeries[index].date,
         };
         translatedData.forEach(strategy => {
@@ -45,17 +46,17 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
             <ResponsiveContainer>
                 <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                        dataKey="date" 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                    <XAxis
+                        dataKey="date"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                         stroke="hsl(var(--border))"
                         tickFormatter={(str) => {
                             const date = new Date(str);
                             return date.toLocaleDateString(getLocale(), { year: '2-digit', month: 'short' });
                         }}
                     />
-                    <YAxis 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                    <YAxis
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                         stroke="hsl(var(--border))"
                         tickFormatter={yAxisFormatter}
                         allowDataOverflow={true}
@@ -70,7 +71,7 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
                         labelStyle={{ color: 'hsl(var(--foreground))' }}
                         formatter={(value: number) => formatCurrency(value, getLocale())}
                     />
-                    <Legend wrapperStyle={{fontSize: '14px'}} />
+                    <Legend wrapperStyle={{ fontSize: '14px' }} />
                     <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 2" />
                     {translatedData.map((strategy, index) => (
                         <Bar

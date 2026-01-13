@@ -22,22 +22,22 @@ const LoadingSpinner: React.FC = () => (
 const InitialState: React.FC = () => {
     const { t } = useLanguage();
     return (
-     <Card className="h-full flex flex-col justify-center items-center text-center p-10 border-dashed">
-        <div className="mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-            </svg>
-        </div>
-        <CardHeader className="p-0">
-            <CardTitle>{t('results.initialState.title')}</CardTitle>
-            <CardDescription className="mt-2">
-                {t('results.initialState.description')}
-            </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0 mt-4">
-            <p className="text-muted-foreground">{t('results.initialState.details')}</p>
-        </CardContent>
-    </Card>
+        <Card className="h-full flex flex-col justify-center items-center text-center p-10 border-dashed">
+            <div className="mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
+                    <path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />
+                </svg>
+            </div>
+            <CardHeader className="p-0">
+                <CardTitle>{t('results.initialState.title')}</CardTitle>
+                <CardDescription className="mt-2">
+                    {t('results.initialState.description')}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 mt-4">
+                <p className="text-muted-foreground">{t('results.initialState.details')}</p>
+            </CardContent>
+        </Card>
     );
 };
 
@@ -51,7 +51,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
     if (!results) {
         return <InitialState />;
     }
-    
+
     const bestBtcAccumulated = Math.max(...results.map(r => r.metrics.totalBtcAccumulated));
     const bestRoi = Math.max(...results.map(r => r.metrics.roiPercentage));
     const mostEfficient = Math.min(...results.map(r => r.metrics.totalUsdInvested));
@@ -62,32 +62,32 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
     return (
         <div className="space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                <MetricCard 
+                <MetricCard
                     title={t('results.metrics.bestBtc')}
-                    value={`${bestBtcAccumulated.toFixed(4)} BTC`} 
-                    description={getStrategyName(results.find(r => r.metrics.totalBtcAccumulated === bestBtcAccumulated)?.strategyName || '')} 
+                    value={`${bestBtcAccumulated.toFixed(4)} BTC`}
+                    description={getStrategyName(results.find(r => r.metrics.totalBtcAccumulated === bestBtcAccumulated)?.strategyName || '')}
                 />
-                <MetricCard 
+                <MetricCard
                     title={t('results.metrics.highestRoi')}
                     value={`${bestRoi.toFixed(2)}%`}
                     description={getStrategyName(results.find(r => r.metrics.roiPercentage === bestRoi)?.strategyName || '')}
                 />
-                <MetricCard 
+                <MetricCard
                     title={t('results.metrics.mostCapitalEfficient')}
-                    value={`$${mostEfficient.toLocaleString()}`} 
-                    description={getStrategyName(results.find(r => r.metrics.totalUsdInvested === mostEfficient)?.strategyName || '')} 
+                    value={`$${mostEfficient.toLocaleString()}`}
+                    description={getStrategyName(results.find(r => r.metrics.totalUsdInvested === mostEfficient)?.strategyName || '')}
                 />
-                <MetricCard 
+                <MetricCard
                     title={t('results.metrics.lowestDrawdown')}
                     value={`${lowestDrawdown.toFixed(2)}%`}
-                    description={getStrategyName(results.find(r => r.metrics.maxDrawdown === lowestDrawdown)?.strategyName || '')} 
+                    description={getStrategyName(results.find(r => r.metrics.maxDrawdown === lowestDrawdown)?.strategyName || '')}
                 />
             </div>
-            
+
             <ComparisonTable results={results} />
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                 <Card>
+                <Card className="glass-panel">
                     <CardHeader>
                         <CardTitle>{t('results.charts.portfolioValueTitle')}</CardTitle>
                         <CardDescription>{t('results.charts.portfolioValueDescription')}</CardDescription>
@@ -96,7 +96,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                         <PortfolioChart data={results} dataKey="portfolioValue" />
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="glass-panel">
                     <CardHeader>
                         <CardTitle>{t('results.charts.btcAccumulatedTitle')}</CardTitle>
                         <CardDescription>{t('results.charts.btcAccumulatedDescription')}</CardDescription>
@@ -105,7 +105,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                         <PortfolioChart data={results} dataKey="btcAccumulated" />
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="glass-panel">
                     <CardHeader>
                         <CardTitle>{t('results.charts.avgCostBasisTitle')}</CardTitle>
                         <CardDescription>{t('results.charts.avgCostBasisDescription')}</CardDescription>
@@ -114,7 +114,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                         <PortfolioChart data={results} dataKey="averageCostBasis" />
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="glass-panel">
                     <CardHeader>
                         <CardTitle>{t('results.charts.weeklyInvestmentTitle')}</CardTitle>
                         <CardDescription>{t('results.charts.weeklyInvestmentDescription')}</CardDescription>

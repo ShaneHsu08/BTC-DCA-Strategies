@@ -10,7 +10,8 @@ interface PortfolioChartProps {
     dataKey: 'portfolioValue' | 'btcAccumulated' | 'averageCostBasis';
 }
 
-const COLORS = ['#3b82f6', '#22c55e', '#a855f7'];
+// Premium FinTech Palette: Electric Blue, Neon Green, Hot Pink
+const COLORS = ['#3b82f6', '#10b981', '#f43f5e'];
 
 export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey }) => {
     const { language, getLocale } = useLanguage();
@@ -18,15 +19,15 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
     if (!data || data.length === 0) {
         return <div>No data to display.</div>;
     }
-    
+
     const translatedData = data.map(strategy => ({
         ...strategy,
         strategyName: getTranslatedStrategyName(strategy.strategyName, language)
     }));
-    
+
     // Combine time series data
     const chartData = translatedData[0].timeSeries.map((_, index) => {
-        const point: { date: string; [key: string]: string | number } = {
+        const point: { date: string;[key: string]: string | number } = {
             date: translatedData[0].timeSeries[index].date,
         };
         translatedData.forEach(strategy => {
@@ -43,12 +44,12 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                 return `¥${(value / 10000).toFixed(0)}万`;
             }
             if (Math.abs(value) >= 1000) {
-                 return `$${(value / 1000).toFixed(0)}k`;
+                return `$${(value / 1000).toFixed(0)}k`;
             }
             return `$${value.toFixed(0)}`;
         }
         : (value: number) => value.toFixed(2);
-        
+
     const tooltipFormatter = isCurrency
         ? (value: number) => formatCurrency(value, getLocale())
         : (value: number) => formatBtc(value);
@@ -58,9 +59,9 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
             <ResponsiveContainer>
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                        dataKey="date" 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                    <XAxis
+                        dataKey="date"
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                         stroke="hsl(var(--border))"
                         tickFormatter={(str) => {
                             const date = new Date(str);
@@ -68,8 +69,8 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                             return date.toLocaleDateString(getLocale(), { year: '2-digit', month: 'short' });
                         }}
                     />
-                    <YAxis 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                    <YAxis
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                         stroke="hsl(var(--border))"
                         tickFormatter={yAxisFormatter}
                     />
@@ -82,7 +83,7 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                         labelStyle={{ color: 'hsl(var(--foreground))' }}
                         formatter={tooltipFormatter}
                     />
-                    <Legend wrapperStyle={{fontSize: '14px'}} />
+                    <Legend wrapperStyle={{ fontSize: '14px' }} />
                     {translatedData.map((strategy, index) => (
                         <Line
                             key={strategy.strategyName}

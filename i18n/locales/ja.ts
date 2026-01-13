@@ -12,7 +12,7 @@ export const ja = {
         dynamicDcaTitle: 'ダイナミックDCA (RSIベース)',
         dynamicDcaTooltip: '相対力指数（RSI）に基づいて週次予算を調整します。<br/>- <strong>低RSI (&lt;30):</strong> 市場は売られ過ぎ、多めに購入。<br/>- <strong>高RSI (&gt;70):</strong> 市場は買われ過ぎ、少なめに購入。',
         rsiTierLabel: 'RSI階層',
-        rsiThresholdLabel: 'RSI (<)',
+        rsiThresholdLabel: 'しきい値',
         budgetLabel: '予算 ($)',
         rsiExtremeLow: '極低',
         rsiLow: '低',
