@@ -1,9 +1,9 @@
-# Bitcoin DCA Strategy Comparison Tool
+# DCA Strategy Simulator
 [中文版](README_zh.md)
 
 <div align="center"><h1><a href=https://dca.btc.sv>Online Demo</a></h1></div>
 
-A React-based web application for comparing different Bitcoin dollar-cost averaging strategies. Supports simulation and comparison of three strategies: standard DCA, dynamic DCA, and value averaging.
+A React-based web application for comparing different Dollar-Cost Averaging (DCA) strategies. Supports simulation and comparison of three strategies: standard DCA, dynamic DCA, and value averaging across multiple assets including Bitcoin and various ETFs.
 
 ## About DCA
 
@@ -42,6 +42,16 @@ The biggest enemy of DCA is not the market, but giving up halfway. The key is to
 
 ## Features
 
+### Supported Assets
+- **Cryptocurrency**: Bitcoin (BTC)
+- **Global Equities**:
+  - Vanguard FTSE All-World UCITS ETF (VWRA)
+  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - Vanguard Total World Stock ETF (VT)
+- **Commodities**: SPDR Gold Shares (GLD)
+- **Thematic**: Invesco QQQ Trust (QQQ)
+- *More assets can be easily added via the registry.*
+
 ### Core Features
 - **Standard DCA**: Fixed-amount periodic investment strategy
 - **Dynamic DCA**: Intelligent DCA strategy based on RSI indicators
@@ -74,7 +84,8 @@ BTCStrategies/
 │   └── ...
 ├── contexts/            # React contexts
 ├── data/               # Static data
-│   └── btcPriceData.ts # Bitcoin historical price data
+│   ├── assetRegistry.ts # Asset definitions
+│   └── priceData.ts     # Historical price data for all assets
 ├── i18n/               # Internationalization
 │   ├── locales/        # Language files
 │   └── LanguageProvider.tsx
@@ -148,8 +159,8 @@ Click the "Run Simulation" button, and the system will calculate the performance
 
 ## Data Description
 
-- Built-in Bitcoin historical price data from 2011-2025 (can connect to real APIs when deployed)
-- Includes RSI technical indicator calculations
+- Built-in historical price data for Bitcoin (2011-2025) and sample data for ETFs (2020-2025)
+- Includes RSI technical indicator calculations for supported assets
 
 ## Development Guide
 

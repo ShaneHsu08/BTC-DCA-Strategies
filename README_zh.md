@@ -1,10 +1,10 @@
-# 比特币定投策略比较工具
+# 定投策略模拟器
 
 [English](README.md)
 
 <div align="center"><h1><a href=https://dca.btc.sv>在线演示</a></h1></div>
 
-一个基于React的Web应用程序，用于比较不同的比特币定投策略。支持标准定投、动态定投和价值平均法三种策略的模拟和比较。
+一个基于React的Web应用程序，用于比较不同的定投(DCA)策略。支持对多种资产（包括比特币和各种ETF）进行标准定投、动态定投和价值平均法三种策略的模拟和比较。
 
 ## 关于定投
 
@@ -43,6 +43,16 @@
 
 ## 功能特性
 
+### 支持的资产
+- **加密货币**: 比特币 (BTC)
+- **全球股票**:
+  - Vanguard FTSE All-World UCITS ETF (VWRA)
+  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - Vanguard Total World Stock ETF (VT)
+- **大宗商品**: SPDR Gold Shares (GLD)
+- **主题投资**: Invesco QQQ Trust (QQQ)
+- *可通过注册表轻松添加更多资产*
+
 ### 核心功能
 - **标准定投 (Standard DCA)**: 固定金额的定期投资策略
 - **动态定投 (Dynamic DCA)**: 基于RSI指标的智能定投策略
@@ -75,7 +85,8 @@ BTCStrategies/
 │   └── ...
 ├── contexts/            # React上下文
 ├── data/               # 静态数据
-│   └── btcPriceData.ts # 比特币历史价格数据
+│   ├── assetRegistry.ts # 资产定义
+│   └── priceData.ts     # 所有资产的历史价格数据
 ├── i18n/               # 国际化
 │   ├── locales/        # 语言文件
 │   └── LanguageProvider.tsx
@@ -148,8 +159,8 @@ npm run build
 
 ## 数据说明
 
-- 内置2011-2025年比特币历史价格数据（实际部署时可接入真实API）
-- 包含RSI技术指标计算
+- 内置比特币历史价格数据 (2011-2025) 和 ETF 样本数据 (2020-2025)
+- 包含支持资产的RSI技术指标计算
 
 ## 开发说明
 
