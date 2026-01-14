@@ -58,11 +58,20 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
         <div className="h-80 w-full">
             <ResponsiveContainer>
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <defs>
+                        {COLORS.map((color, index) => (
+                            <filter key={`glow-${index}`} id={`glow-${index}`} x="-50%" y="-50%" width="200%" height="200%">
+                                <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor={color} floodOpacity="0.5" />
+                            </filter>
+                        ))}
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                         stroke="hsl(var(--border))"
+                        axisLine={{ strokeOpacity: 0.5 }}
+                        tickLine={{ strokeOpacity: 0.5 }}
                         tickFormatter={(str) => {
                             const date = new Date(str);
                             // Use a locale-sensitive date format
@@ -70,28 +79,35 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                         }}
                     />
                     <YAxis
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                         stroke="hsl(var(--border))"
+                        axisLine={{ strokeOpacity: 0.5 }}
+                        tickLine={{ strokeOpacity: 0.5 }}
                         tickFormatter={yAxisFormatter}
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: 'hsl(var(--card))',
+                            backgroundColor: 'hsl(var(--card) / 0.95)',
                             borderColor: 'hsl(var(--border))',
-                            borderRadius: 'var(--radius)'
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(8px)',
+                            boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)'
                         }}
-                        labelStyle={{ color: 'hsl(var(--foreground))' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600, marginBottom: '4px' }}
+                        itemStyle={{ fontSize: '12px' }}
                         formatter={tooltipFormatter}
                     />
-                    <Legend wrapperStyle={{ fontSize: '14px' }} />
+                    <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '8px' }} />
                     {translatedData.map((strategy, index) => (
                         <Line
                             key={strategy.strategyName}
                             type="monotone"
                             dataKey={strategy.strategyName}
                             stroke={COLORS[index % COLORS.length]}
-                            strokeWidth={2}
+                            strokeWidth={2.5}
                             dot={false}
+                            filter={`url(#glow-${index % COLORS.length})`}
+                            activeDot={{ r: 5, strokeWidth: 2, fill: 'hsl(var(--background))' }}
                         />
                     ))}
                 </LineChart>

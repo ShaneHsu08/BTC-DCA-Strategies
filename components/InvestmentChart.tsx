@@ -45,39 +45,55 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
         <div className="h-80 w-full">
             <ResponsiveContainer>
                 <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <defs>
+                        {COLORS.map((color, index) => (
+                            <linearGradient key={`gradient-${index}`} id={`bar-gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor={color} stopOpacity={0.9} />
+                                <stop offset="100%" stopColor={color} stopOpacity={0.6} />
+                            </linearGradient>
+                        ))}
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                         stroke="hsl(var(--border))"
+                        axisLine={{ strokeOpacity: 0.5 }}
+                        tickLine={{ strokeOpacity: 0.5 }}
                         tickFormatter={(str) => {
                             const date = new Date(str);
                             return date.toLocaleDateString(getLocale(), { year: '2-digit', month: 'short' });
                         }}
                     />
                     <YAxis
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                         stroke="hsl(var(--border))"
+                        axisLine={{ strokeOpacity: 0.5 }}
+                        tickLine={{ strokeOpacity: 0.5 }}
                         tickFormatter={yAxisFormatter}
                         allowDataOverflow={true}
                         domain={['auto', 'auto']}
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: 'hsl(var(--card))',
+                            backgroundColor: 'hsl(var(--card) / 0.95)',
                             borderColor: 'hsl(var(--border))',
-                            borderRadius: 'var(--radius)'
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(8px)',
+                            boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)'
                         }}
-                        labelStyle={{ color: 'hsl(var(--foreground))' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600, marginBottom: '4px' }}
+                        itemStyle={{ fontSize: '12px' }}
                         formatter={(value: number) => formatCurrency(value, getLocale())}
                     />
-                    <Legend wrapperStyle={{ fontSize: '14px' }} />
-                    <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 2" />
+                    <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '8px' }} />
+                    <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 2" strokeOpacity={0.5} />
                     {translatedData.map((strategy, index) => (
                         <Bar
                             key={strategy.strategyName}
                             dataKey={strategy.strategyName}
-                            fill={COLORS[index % COLORS.length]}
+                            fill={`url(#bar-gradient-${index % COLORS.length})`}
+                            radius={[4, 4, 0, 0]}
                         />
                     ))}
                 </BarChart>

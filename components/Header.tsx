@@ -22,16 +22,18 @@ export const Header: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
                 <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full">
+                    <div className="bg-primary/10 p-2 rounded-full glow-pulse">
                         <BitcoinLogo className="w-6 h-6 text-primary" />
                     </div>
-                    <div>
-                        <h1 className="text-xl font-bold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                    <div className="relative">
+                        <h1 className="text-xl font-bold tracking-tight text-foreground">
                             {t('header.title')}
                         </h1>
+                        {/* Animated gradient underline */}
+                        <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-emerald-500 to-primary bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite]"></div>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">

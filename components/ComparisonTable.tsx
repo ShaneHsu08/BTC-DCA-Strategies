@@ -27,7 +27,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
                 <CardDescription>{t('results.table.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="w-full overflow-x-auto rounded-lg border border-border/50">
+                <div className="w-full overflow-x-auto rounded-lg border border-border/50 table-premium">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-muted/50">
                             <tr>

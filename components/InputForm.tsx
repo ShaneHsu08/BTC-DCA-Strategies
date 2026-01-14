@@ -166,8 +166,8 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                     <span className="text-center">{t('form.budgetLabel')}</span>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 items-center">
-                                    <Label htmlFor="rsiExtremeLow" className="px-1 text-green-500 font-medium">{t('form.rsiExtremeLow')}</Label>
+                                <div className="grid grid-cols-3 gap-2 items-center rsi-extreme-low rounded-lg p-2 -mx-1">
+                                    <Label htmlFor="rsiExtremeLow" className="px-1 text-green-500 font-semibold">{t('form.rsiExtremeLow')}</Label>
                                     <Input id="rsiExtremeLow" name="rsiExtremeLow" type="number" value={params.rsiExtremeLow} onChange={handleChange} className="text-center h-9" />
                                     <div className="relative">
                                         <span className="absolute left-2 top-2 text-muted-foreground text-xs">$</span>
@@ -175,12 +175,12 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 items-center">
-                                    <Label htmlFor="rsiLow" className="px-1 text-emerald-500/80">{t('form.rsiLow')}</Label>
+                                <div className="grid grid-cols-3 gap-2 items-center rsi-low rounded-lg p-2 -mx-1">
+                                    <Label htmlFor="rsiLow" className="px-1 text-emerald-500 font-medium">{t('form.rsiLow')}</Label>
                                     <Input id="rsiLow" name="rsiLow" type="number" value={params.rsiLow} onChange={handleChange} className="text-center h-9" />
                                     <div className="relative">
                                         <span className="absolute left-2 top-2 text-muted-foreground text-xs">$</span>
-                                        <Input name="budgetLow" type="number" value={params.budgetLow} onChange={handleChange} className="text-center h-9 pl-4 text-emerald-500/80 font-semibold" />
+                                        <Input name="budgetLow" type="number" value={params.budgetLow} onChange={handleChange} className="text-center h-9 pl-4 text-emerald-500 font-semibold" />
                                     </div>
                                 </div>
 
@@ -190,17 +190,17 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                     <span className="font-mono">{`$${params.baseBudget}`}</span>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 items-center">
-                                    <Label htmlFor="rsiHigh" className="px-1 text-orange-400">{t('form.rsiHigh')}</Label>
+                                <div className="grid grid-cols-3 gap-2 items-center rsi-high rounded-lg p-2 -mx-1">
+                                    <Label htmlFor="rsiHigh" className="px-1 text-orange-400 font-medium">{t('form.rsiHigh')}</Label>
                                     <Input id="rsiHigh" name="rsiHigh" type="number" value={params.rsiHigh} onChange={handleChange} className="text-center h-9" />
                                     <div className="relative">
                                         <span className="absolute left-2 top-2 text-muted-foreground text-xs">$</span>
-                                        <Input name="budgetHigh" type="number" value={params.budgetHigh} onChange={handleChange} className="text-center h-9 pl-4 text-orange-400" />
+                                        <Input name="budgetHigh" type="number" value={params.budgetHigh} onChange={handleChange} className="text-center h-9 pl-4 text-orange-400 font-medium" />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 items-center">
-                                    <Label htmlFor="rsiExtremeHigh" className="px-1 text-red-500 font-medium">{t('form.rsiExtremeHigh')}</Label>
+                                <div className="grid grid-cols-3 gap-2 items-center rsi-extreme-high rounded-lg p-2 -mx-1">
+                                    <Label htmlFor="rsiExtremeHigh" className="px-1 text-red-500 font-semibold">{t('form.rsiExtremeHigh')}</Label>
                                     <Input id="rsiExtremeHigh" name="rsiExtremeHigh" type="number" value={params.rsiExtremeHigh} onChange={handleChange} className="text-center h-9" />
                                     <div className="relative">
                                         <span className="absolute left-2 top-2 text-muted-foreground text-xs">$</span>
