@@ -1,7 +1,7 @@
 export const zh = {
     header: {
         title: '定投策略模拟器',
-        subtitle: '比较不同的比特币成本平均法策略。',
+        subtitle: '比较不同投资资产的成本平均法策略。',
     },
     form: {
         title: '模拟参数',
@@ -24,6 +24,7 @@ export const zh = {
         weeklyGrowth: '目标周增长 ($)',
         maxBuyCap: '最大买入上限 ($)',
         maxSellCap: '最大卖出上限 ($)',
+        selectAsset: '选择资产',
         runButton: '运行模拟',
         simulatingButton: '模拟中...',
     },
@@ -35,6 +36,7 @@ export const zh = {
         },
         metrics: {
             bestBtc: '累计最多 BTC',
+            bestAsset: '累计最多资产',
             highestRoi: '最高 ROI',
             mostCapitalEfficient: '最高效资本',
             lowestDrawdown: '最低最大回撤',
@@ -47,6 +49,7 @@ export const zh = {
             totalInvested: '总投资 USD',
             roi: '投资回报率 (ROI)',
             btcAccumulated: '累计总 BTC',
+            assetAccumulated: '累计总资产',
             avgCost: '平均成本基础',
             sharpeRatio: '夏普比率',
             maxDrawdown: '最大回撤',
@@ -56,6 +59,8 @@ export const zh = {
             portfolioValueDescription: '可视化每种策略下您的投资组合价值的增长。',
             btcAccumulatedTitle: '累计 BTC 随时间变化',
             btcAccumulatedDescription: '显示在模拟期间累计的比特币总量。',
+            assetAccumulatedTitle: '累计资产随时间变化',
+            assetAccumulatedDescription: '显示在模拟期间累计的资产总量。',
             avgCostBasisTitle: '平均成本基础 (USD)',
             avgCostBasisDescription: '比较您的平均购买价格与市场价格。',
             weeklyInvestmentTitle: '每周投资金额 (USD)',

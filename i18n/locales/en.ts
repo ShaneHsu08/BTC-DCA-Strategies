@@ -1,7 +1,7 @@
 export const en = {
     header: {
         title: 'DCA Strategy Simulator',
-        subtitle: 'Compare different Dollar-Cost Averaging strategies for Bitcoin.',
+        subtitle: 'Compare different Dollar-Cost Averaging strategies for your investments.',
     },
     form: {
         title: 'Simulation Parameters',
@@ -24,6 +24,7 @@ export const en = {
         weeklyGrowth: 'Target Weekly Growth ($)',
         maxBuyCap: 'Max Buy Cap ($)',
         maxSellCap: 'Max Sell Cap ($)',
+        selectAsset: 'Select Asset',
         runButton: 'Run Simulation',
         simulatingButton: 'Simulating...',
     },
@@ -35,6 +36,7 @@ export const en = {
         },
         metrics: {
             bestBtc: 'Best BTC Accumulated',
+            bestAsset: 'Best Asset Accumulated',
             highestRoi: 'Highest ROI',
             mostCapitalEfficient: 'Most Capital Efficient',
             lowestDrawdown: 'Lowest Max Drawdown',
@@ -47,6 +49,7 @@ export const en = {
             totalInvested: 'Total USD Invested',
             roi: 'Return on Investment (ROI)',
             btcAccumulated: 'Total BTC Accumulated',
+            assetAccumulated: 'Total Asset Accumulated',
             avgCost: 'Average Cost Basis',
             sharpeRatio: 'Sharpe Ratio',
             maxDrawdown: 'Max Drawdown',
@@ -56,6 +59,8 @@ export const en = {
             portfolioValueDescription: 'Visualizes the growth of your portfolio value with each strategy.',
             btcAccumulatedTitle: 'BTC Accumulated Over Time',
             btcAccumulatedDescription: 'Shows the total amount of Bitcoin accumulated over the simulation period.',
+            assetAccumulatedTitle: 'Asset Accumulated Over Time',
+            assetAccumulatedDescription: 'Shows the total amount of assets accumulated over the simulation period.',
             avgCostBasisTitle: 'Average Cost Basis (USD)',
             avgCostBasisDescription: 'Compares your average buy price against the market price.',
             weeklyInvestmentTitle: 'Weekly Investment Amount (USD)',

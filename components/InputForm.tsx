@@ -7,6 +7,7 @@ import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/Tooltip';
 import { useLanguage } from '../i18n/LanguageProvider';
+import { assetRegistry, getAssetsByCategory, categoryNames, getAssetById } from '../data/assetRegistry';
 
 interface InputFormProps {
     params: SimulationParams;
@@ -23,12 +24,21 @@ const InfoIcon: React.FC = () => (
 
 export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSimulation, isLoading }) => {
     const { t } = useLanguage();
+    const selectedAsset = getAssetById(params.selectedAsset);
+    const assetsByCategory = getAssetsByCategory();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
         setParams(prev => ({
             ...prev,
             [name]: type === 'number' ? parseFloat(value) || 0 : value,
+        }));
+    };
+
+    const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setParams(prev => ({
+            ...prev,
+            selectedAsset: e.target.value,
         }));
     };
 
@@ -63,6 +73,33 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
             <CardContent>
                 <TooltipProvider>
                     <form onSubmit={(e) => { e.preventDefault(); onRunSimulation(); }} className="space-y-8">
+                        {/* Asset Selector */}
+                        <div className="space-y-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 p-4 border border-primary/20">
+                            <div className="space-y-2">
+                                <Label htmlFor="selectedAsset" className="text-foreground/90 font-semibold">{t('form.selectAsset') || 'Select Asset'}</Label>
+                                <select
+                                    id="selectedAsset"
+                                    name="selectedAsset"
+                                    value={params.selectedAsset}
+                                    onChange={handleAssetChange}
+                                    className="w-full h-10 px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    {Object.entries(assetsByCategory).map(([category, assets]) => (
+                                        <optgroup key={category} label={categoryNames[category] || category}>
+                                            {assets.map(asset => (
+                                                <option key={asset.id} value={asset.id}>
+                                                    {asset.code} - {asset.name}
+                                                </option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
+                                </select>
+                                {selectedAsset && (
+                                    <p className="text-xs text-muted-foreground mt-1">{selectedAsset.description}</p>
+                                )}
+                            </div>
+                        </div>
+
                         {/* Basic Settings */}
                         <div className="space-y-4 rounded-lg bg-secondary/30 p-4 border border-border/50">
                             <div className="space-y-2">

@@ -52,7 +52,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
         return <InitialState />;
     }
 
-    const bestBtcAccumulated = Math.max(...results.map(r => r.metrics.totalBtcAccumulated));
+    const bestAssetAccumulated = Math.max(...results.map(r => r.metrics.totalAssetAccumulated));
     const bestRoi = Math.max(...results.map(r => r.metrics.roiPercentage));
     const mostEfficient = Math.min(...results.map(r => r.metrics.totalUsdInvested));
     const lowestDrawdown = Math.min(...results.map(r => r.metrics.maxDrawdown));
@@ -63,9 +63,9 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
         <div className="space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 <MetricCard
-                    title={t('results.metrics.bestBtc')}
-                    value={`${bestBtcAccumulated.toFixed(4)} BTC`}
-                    description={getStrategyName(results.find(r => r.metrics.totalBtcAccumulated === bestBtcAccumulated)?.strategyName || '')}
+                    title={t('results.metrics.bestAsset') || t('results.metrics.bestBtc')}
+                    value={`${bestAssetAccumulated.toFixed(4)}`}
+                    description={getStrategyName(results.find(r => r.metrics.totalAssetAccumulated === bestAssetAccumulated)?.strategyName || '')}
                 />
                 <MetricCard
                     title={t('results.metrics.highestRoi')}
@@ -98,11 +98,11 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                 </Card>
                 <Card className="glass-panel">
                     <CardHeader>
-                        <CardTitle>{t('results.charts.btcAccumulatedTitle')}</CardTitle>
-                        <CardDescription>{t('results.charts.btcAccumulatedDescription')}</CardDescription>
+                        <CardTitle>{t('results.charts.assetAccumulatedTitle') || t('results.charts.btcAccumulatedTitle')}</CardTitle>
+                        <CardDescription>{t('results.charts.assetAccumulatedDescription') || t('results.charts.btcAccumulatedDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <PortfolioChart data={results} dataKey="btcAccumulated" />
+                        <PortfolioChart data={results} dataKey="assetAccumulated" />
                     </CardContent>
                 </Card>
                 <Card className="glass-panel">

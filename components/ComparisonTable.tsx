@@ -65,10 +65,10 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
                                 ))}
                             </tr>
                             <tr className="hover:bg-muted/30 transition-colors">
-                                <td className="p-4 font-medium">{t('results.table.btcAccumulated')}</td>
+                                <td className="p-4 font-medium">{t('results.table.assetAccumulated') || t('results.table.btcAccumulated')}</td>
                                 {results.map(r => (
-                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('totalBtcAccumulated', r.metrics.totalBtcAccumulated)}`}>
-                                        {formatBtc(r.metrics.totalBtcAccumulated)}
+                                    <td key={r.strategyName} className={`p-4 text-right font-mono ${getBestClass('totalAssetAccumulated', r.metrics.totalAssetAccumulated)}`}>
+                                        {formatBtc(r.metrics.totalAssetAccumulated)}
                                     </td>
                                 ))}
                             </tr>

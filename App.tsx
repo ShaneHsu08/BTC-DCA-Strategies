@@ -5,16 +5,18 @@ import { InputForm } from './components/InputForm';
 import { ResultsDashboard } from './components/ResultsDashboard';
 import { runSimulation } from './services/simulationService';
 import type { SimulationParams, StrategyResult } from './types';
-import { btcPriceData } from './data/btcPriceData';
+import { getPriceDataForAsset } from './data/priceData';
+import { getAssetById } from './data/assetRegistry';
 import { useLanguage } from './i18n/LanguageProvider';
 
 const App: React.FC = () => {
     const { t } = useLanguage();
     const [simulationParams, setSimulationParams] = useState<SimulationParams>({
+        selectedAsset: 'BTC',
         weeklyBudget: 500,
         startDate: '2024-09-20',
         endDate: '2025-09-20',
-        
+
         // New Dynamic DCA Defaults
         rsiExtremeLow: 30,
         budgetExtremeLow: 1000,
@@ -47,11 +49,12 @@ const App: React.FC = () => {
 
         setTimeout(() => {
             try {
-                const simulationResults = runSimulation(simulationParams, btcPriceData);
+                const priceData = getPriceDataForAsset(simulationParams.selectedAsset);
+                const simulationResults = runSimulation(simulationParams, priceData);
                 setResults(simulationResults);
             } catch (e) {
                 if (e instanceof Error) {
-                     if (e.message.includes("Not enough data")) {
+                    if (e.message.includes("Not enough data")) {
                         setError(t('error.notEnoughData'));
                     } else {
                         setError(`${t('error.simulationFailed')}: ${e.message}`);
@@ -92,7 +95,7 @@ const App: React.FC = () => {
                     <p>{t('footer.disclaimer')}</p>
                     <div className="mt-4 flex flex-col items-center gap-2 text-xs">
                         <div className="flex gap-4">
-                        <span>© {new Date().getFullYear()} ShenYouX</span>
+                            <span>© {new Date().getFullYear()} ShenYouX</span>
                             <a
                                 href="https://github.com/ShaneHsu08/BTC-DCA-Strategies"
                                 target="_blank"

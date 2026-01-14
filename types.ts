@@ -5,6 +5,7 @@ export interface PriceDataPoint {
 }
 
 export interface SimulationParams {
+    selectedAsset: string;
     weeklyBudget: number;
     startDate: string;
     endDate: string;
@@ -18,7 +19,7 @@ export interface SimulationParams {
     budgetHigh: number;
     rsiExtremeHigh: number;
     budgetExtremeHigh: number;
-    
+
     // Value Averaging
     vaMaxBuyCap: number;
     vaMaxSellCap: number;
@@ -28,7 +29,7 @@ export interface SimulationParams {
 export interface TimeSeriesPoint {
     date: string;
     price: number;
-    btcAccumulated: number;
+    assetAccumulated: number;
     portfolioValue: number;
     averageCostBasis: number;
     usdInvested: number;
@@ -37,7 +38,7 @@ export interface TimeSeriesPoint {
 
 export interface Metrics {
     totalUsdInvested: number;
-    totalBtcAccumulated: number;
+    totalAssetAccumulated: number;
     finalPortfolioValue: number;
     averageCostBasis: number;
     roiPercentage: number;

@@ -4,7 +4,7 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
     if (timeSeries.length < 2) {
         return {
             totalUsdInvested: 0,
-            totalBtcAccumulated: 0,
+            totalAssetAccumulated: 0,
             finalPortfolioValue: 0,
             averageCostBasis: 0,
             roiPercentage: 0,
@@ -40,20 +40,20 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
             const weeklyReturn = (timeSeries[i].portfolioValue - previousValue) / previousValue;
             weeklyReturns.push(weeklyReturn);
         } else {
-             weeklyReturns.push(0);
+            weeklyReturns.push(0);
         }
     }
 
     let sharpeRatio = 0;
     if (weeklyReturns.length > 1) {
         const meanReturn = weeklyReturns.reduce((acc, val) => acc + val, 0) / weeklyReturns.length;
-        
+
         // 使用样本标准差（除以n-1而不是n）
         const variance = weeklyReturns
             .map(x => Math.pow(x - meanReturn, 2))
             .reduce((a, b) => a + b) / (weeklyReturns.length - 1);
         const stdDev = Math.sqrt(variance);
-    
+
         if (stdDev > 0) {
             // 假设风险无风险利率为0（对于加密货币投资是合理的简化）
             const weeklySharpe = meanReturn / stdDev;
@@ -65,7 +65,7 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
 
     return {
         totalUsdInvested,
-        totalBtcAccumulated: lastPoint.btcAccumulated,
+        totalAssetAccumulated: lastPoint.assetAccumulated,
         finalPortfolioValue,
         averageCostBasis: lastPoint.averageCostBasis,
         roiPercentage: roi,
@@ -75,22 +75,22 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
 };
 
 const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let btcAccumulated = 0;
+    let assetAccumulated = 0;
     let usdInvested = 0;
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
         const investment = params.weeklyBudget;
         usdInvested += investment;
-        btcAccumulated += investment / point.close;
+        assetAccumulated += investment / point.close;
 
-        const portfolioValue = btcAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && btcAccumulated > 0 ? usdInvested / btcAccumulated : 0;
+        const portfolioValue = assetAccumulated * point.close;
+        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
 
         timeSeries.push({
             date: point.date,
             price: point.close,
-            btcAccumulated,
+            assetAccumulated,
             portfolioValue,
             averageCostBasis,
             usdInvested,
@@ -106,7 +106,7 @@ const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): 
 };
 
 const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let btcAccumulated = 0;
+    let assetAccumulated = 0;
     let usdInvested = 0;
     const timeSeries: TimeSeriesPoint[] = [];
 
@@ -123,15 +123,15 @@ const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): S
         }
 
         usdInvested += investment;
-        btcAccumulated += investment / point.close;
+        assetAccumulated += investment / point.close;
 
-        const portfolioValue = btcAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && btcAccumulated > 0 ? usdInvested / btcAccumulated : 0;
-        
+        const portfolioValue = assetAccumulated * point.close;
+        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
+
         timeSeries.push({
             date: point.date,
             price: point.close,
-            btcAccumulated,
+            assetAccumulated,
             portfolioValue,
             averageCostBasis,
             usdInvested,
@@ -147,14 +147,14 @@ const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): S
 };
 
 const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let btcAccumulated = 0;
+    let assetAccumulated = 0;
     let usdInvested = 0;
     let targetValue = 0;
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
         targetValue += params.vaWeeklyGrowth;
-        const currentPortfolioValue = btcAccumulated * point.close;
+        const currentPortfolioValue = assetAccumulated * point.close;
         let investment = targetValue - currentPortfolioValue;
 
         // Apply caps
@@ -165,24 +165,24 @@ const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]
         }
 
         usdInvested += investment;
-        btcAccumulated += investment / point.close;
+        assetAccumulated += investment / point.close;
 
-        if (btcAccumulated < 0) btcAccumulated = 0; // Can't have negative BTC
+        if (assetAccumulated < 0) assetAccumulated = 0; // Can't have negative assets
 
-        const portfolioValue = btcAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && btcAccumulated > 0 ? usdInvested / btcAccumulated : 0;
-        
+        const portfolioValue = assetAccumulated * point.close;
+        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
+
         timeSeries.push({
             date: point.date,
             price: point.close,
-            btcAccumulated,
+            assetAccumulated,
             portfolioValue,
             averageCostBasis,
             usdInvested,
             weeklyInvestment: investment,
         });
     }
-    
+
     return {
         strategyName: 'valueAveraging',
         timeSeries,
@@ -203,7 +203,7 @@ export const runSimulation = (params: SimulationParams, allPriceData: PriceDataP
     if (filteredPriceData.length < 2) {
         throw new Error("Not enough data for the selected date range. Please select a wider range.");
     }
-    
+
     const standardDcaResult = runStandardDCA(params, filteredPriceData);
     const dynamicDcaResult = runDynamicDCA(params, filteredPriceData);
     const valueAveragingResult = runValueAveraging(params, filteredPriceData);

@@ -1,7 +1,7 @@
 export const ja = {
     header: {
         title: 'DCA戦略シミュレーター',
-        subtitle: 'ビットコインの様々なドルコスト平均法戦略を比較します。',
+        subtitle: '様々な投資資産のドルコスト平均法戦略を比較します。',
     },
     form: {
         title: 'シミュレーションパラメータ',
@@ -24,6 +24,7 @@ export const ja = {
         weeklyGrowth: '目標週次成長額 ($)',
         maxBuyCap: '最大購入キャップ ($)',
         maxSellCap: '最大売却キャップ ($)',
+        selectAsset: '資産を選択',
         runButton: 'シミュレーション実行',
         simulatingButton: 'シミュレーション中...',
     },
@@ -35,6 +36,7 @@ export const ja = {
         },
         metrics: {
             bestBtc: '最多BTC蓄積量',
+            bestAsset: '最多資産蓄積量',
             highestRoi: '最高ROI',
             mostCapitalEfficient: '最高資本効率',
             lowestDrawdown: '最低最大ドローダウン',
@@ -47,6 +49,7 @@ export const ja = {
             totalInvested: '総投資USD',
             roi: '投資収益率 (ROI)',
             btcAccumulated: '総BTC蓄積量',
+            assetAccumulated: '総資産蓄積量',
             avgCost: '平均取得価額',
             sharpeRatio: 'シャープ・レシオ',
             maxDrawdown: '最大ドローダウン',
@@ -56,6 +59,8 @@ export const ja = {
             portfolioValueDescription: '各戦略でのポートフォリオ価値の成長を可視化します。',
             btcAccumulatedTitle: 'BTC蓄積量の時系列変化',
             btcAccumulatedDescription: 'シミュレーション期間中に蓄積されたビットコインの総量を示します。',
+            assetAccumulatedTitle: '資産蓄積量の時系列変化',
+            assetAccumulatedDescription: 'シミュレーション期間中に蓄積された資産の総量を示します。',
             avgCostBasisTitle: '平均取得価額 (USD)',
             avgCostBasisDescription: 'あなたの平均購入価格と市場価格を比較します。',
             weeklyInvestmentTitle: '週次投資額 (USD)',
