@@ -1,30 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bitcoin Strategy Comparison Tool</title>
-    
+    <title>DCA Strategy Comparison Tool | Bitcoin & ETF Investment Analysis</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Compare Dollar Cost Averaging (DCA) strategies for Bitcoin and ETFs. Analyze Standard DCA, RSI-based Dynamic DCA, and Value Averaging with real market data." />
+    <meta name="keywords"
+        content="DCA, Dollar Cost Averaging, Bitcoin, ETF, investment strategy, RSI, Value Averaging, crypto investing" />
+    <meta name="author" content="ShenYouX" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DCA Strategy Comparison Tool" />
+    <meta property="og:description"
+        content="Compare Dollar Cost Averaging strategies for Bitcoin and ETFs with real market data analysis." />
+
+    <!-- Google Fonts - IBM Plex Sans (Financial Trust) + IBM Plex Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/site.webmanifest">
 
     <style>
-        /* Minimal critical CSS if needed, otherwise handled by index.css */
+        /* Critical CSS for faster initial paint */
+        :root {
+            --background: 220 20% 97%;
+            --foreground: 220 30% 10%;
+        }
+
+        .dark {
+            --background: 222 47% 6%;
+            --foreground: 210 40% 98%;
+        }
+
+        .light {
+            --background: 220 20% 97%;
+            --foreground: 220 30% 10%;
+        }
+
+        body {
+            margin: 0;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Initial loading state */
+        #root:empty::before {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 48px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
     </style>
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
-  
-  <!-- Web App Manifest -->
-  <link rel="manifest" href="/site.webmanifest">
 </head>
+
 <body class="bg-background">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
