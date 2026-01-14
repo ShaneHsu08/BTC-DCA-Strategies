@@ -13,7 +13,8 @@ const App: React.FC = () => {
     const { t } = useLanguage();
     const [simulationParams, setSimulationParams] = useState<SimulationParams>({
         selectedAsset: 'BTC',
-        weeklyBudget: 500,
+        frequency: 'weekly',
+        baseBudget: 500,
         startDate: '2024-09-20',
         endDate: '2025-09-20',
 
@@ -29,7 +30,7 @@ const App: React.FC = () => {
 
         vaMaxBuyCap: 1500,
         vaMaxSellCap: 500,
-        vaWeeklyGrowth: 500,
+        vaPeriodGrowth: 500,
     });
     const [results, setResults] = useState<StrategyResult[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);

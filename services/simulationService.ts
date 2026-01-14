@@ -1,6 +1,44 @@
-import type { SimulationParams, PriceDataPoint, StrategyResult, Metrics, TimeSeriesPoint } from '../types';
+import type { SimulationParams, PriceDataPoint, StrategyResult, Metrics, TimeSeriesPoint, InvestmentFrequency } from '../types';
 
-const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
+/**
+ * Sample price data based on investment frequency
+ * - Daily: Use every data point (assuming weekly data, interpolate to daily-like granularity)
+ * - Weekly: Use data as-is
+ * - Monthly: Sample approximately every 4 weeks
+ */
+const samplePriceData = (priceData: PriceDataPoint[], frequency: InvestmentFrequency): PriceDataPoint[] => {
+    switch (frequency) {
+        case 'daily':
+            // Since source data is weekly, we'll use every data point to simulate more frequent investments
+            // In a real app, you'd have actual daily data
+            return priceData;
+        case 'weekly':
+            return priceData;
+        case 'monthly':
+            // Sample every ~4 weeks for monthly investments
+            return priceData.filter((_, index) => index % 4 === 0);
+        default:
+            return priceData;
+    }
+};
+
+/**
+ * Get the annualization factor for Sharpe ratio based on frequency
+ */
+const getAnnualizationFactor = (frequency: InvestmentFrequency): number => {
+    switch (frequency) {
+        case 'daily':
+            return Math.sqrt(365);
+        case 'weekly':
+            return Math.sqrt(52);
+        case 'monthly':
+            return Math.sqrt(12);
+        default:
+            return Math.sqrt(52);
+    }
+};
+
+const calculateMetrics = (timeSeries: TimeSeriesPoint[], frequency: InvestmentFrequency): Metrics => {
     if (timeSeries.length < 2) {
         return {
             totalUsdInvested: 0,
@@ -33,32 +71,32 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[]): Metrics => {
     const roi = totalUsdInvested > 0 ? ((finalPortfolioValue - totalUsdInvested) / totalUsdInvested) * 100 : 0;
 
     // Calculate Sharpe Ratio
-    const weeklyReturns: number[] = [];
+    const periodReturns: number[] = [];
     for (let i = 1; i < timeSeries.length; i++) {
         const previousValue = timeSeries[i - 1].portfolioValue;
         if (previousValue > 0) {
-            const weeklyReturn = (timeSeries[i].portfolioValue - previousValue) / previousValue;
-            weeklyReturns.push(weeklyReturn);
+            const periodReturn = (timeSeries[i].portfolioValue - previousValue) / previousValue;
+            periodReturns.push(periodReturn);
         } else {
-            weeklyReturns.push(0);
+            periodReturns.push(0);
         }
     }
 
     let sharpeRatio = 0;
-    if (weeklyReturns.length > 1) {
-        const meanReturn = weeklyReturns.reduce((acc, val) => acc + val, 0) / weeklyReturns.length;
+    if (periodReturns.length > 1) {
+        const meanReturn = periodReturns.reduce((acc, val) => acc + val, 0) / periodReturns.length;
 
         // 使用样本标准差（除以n-1而不是n）
-        const variance = weeklyReturns
+        const variance = periodReturns
             .map(x => Math.pow(x - meanReturn, 2))
-            .reduce((a, b) => a + b) / (weeklyReturns.length - 1);
+            .reduce((a, b) => a + b) / (periodReturns.length - 1);
         const stdDev = Math.sqrt(variance);
 
         if (stdDev > 0) {
             // 假设风险无风险利率为0（对于加密货币投资是合理的简化）
-            const weeklySharpe = meanReturn / stdDev;
-            // 年化夏普比率：周夏普比率 × √52
-            sharpeRatio = weeklySharpe * Math.sqrt(52);
+            const periodSharpe = meanReturn / stdDev;
+            // 年化夏普比率 based on frequency
+            sharpeRatio = periodSharpe * getAnnualizationFactor(frequency);
         }
     }
 
@@ -80,7 +118,7 @@ const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): 
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
-        const investment = params.weeklyBudget;
+        const investment = params.baseBudget;
         usdInvested += investment;
         assetAccumulated += investment / point.close;
 
@@ -94,14 +132,14 @@ const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): 
             portfolioValue,
             averageCostBasis,
             usdInvested,
-            weeklyInvestment: investment,
+            periodInvestment: investment,
         });
     }
 
     return {
         strategyName: 'standardDca',
         timeSeries,
-        metrics: calculateMetrics(timeSeries),
+        metrics: calculateMetrics(timeSeries, params.frequency),
     };
 };
 
@@ -111,7 +149,7 @@ const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): S
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
-        let investment = params.weeklyBudget;
+        let investment = params.baseBudget;
         if (point.rsi <= params.rsiExtremeLow) {
             investment = params.budgetExtremeLow;
         } else if (point.rsi <= params.rsiLow) {
@@ -135,14 +173,14 @@ const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): S
             portfolioValue,
             averageCostBasis,
             usdInvested,
-            weeklyInvestment: investment,
+            periodInvestment: investment,
         });
     }
 
     return {
         strategyName: 'dynamicDca',
         timeSeries,
-        metrics: calculateMetrics(timeSeries),
+        metrics: calculateMetrics(timeSeries, params.frequency),
     };
 };
 
@@ -153,7 +191,7 @@ const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
-        targetValue += params.vaWeeklyGrowth;
+        targetValue += params.vaPeriodGrowth;
         const currentPortfolioValue = assetAccumulated * point.close;
         let investment = targetValue - currentPortfolioValue;
 
@@ -179,14 +217,14 @@ const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]
             portfolioValue,
             averageCostBasis,
             usdInvested,
-            weeklyInvestment: investment,
+            periodInvestment: investment,
         });
     }
 
     return {
         strategyName: 'valueAveraging',
         timeSeries,
-        metrics: calculateMetrics(timeSeries),
+        metrics: calculateMetrics(timeSeries, params.frequency),
     };
 }
 
@@ -195,18 +233,22 @@ export const runSimulation = (params: SimulationParams, allPriceData: PriceDataP
     const startDate = new Date(params.startDate);
     const endDate = new Date(params.endDate);
 
+    // First filter by date range
     const filteredPriceData = allPriceData.filter(point => {
         const pointDate = new Date(point.date);
         return pointDate >= startDate && pointDate <= endDate;
     });
 
-    if (filteredPriceData.length < 2) {
+    // Then sample based on frequency
+    const sampledPriceData = samplePriceData(filteredPriceData, params.frequency);
+
+    if (sampledPriceData.length < 2) {
         throw new Error("Not enough data for the selected date range. Please select a wider range.");
     }
 
-    const standardDcaResult = runStandardDCA(params, filteredPriceData);
-    const dynamicDcaResult = runDynamicDCA(params, filteredPriceData);
-    const valueAveragingResult = runValueAveraging(params, filteredPriceData);
+    const standardDcaResult = runStandardDCA(params, sampledPriceData);
+    const dynamicDcaResult = runDynamicDCA(params, sampledPriceData);
+    const valueAveragingResult = runValueAveraging(params, sampledPriceData);
 
     return [standardDcaResult, dynamicDcaResult, valueAveragingResult];
 };

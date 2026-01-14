@@ -1,6 +1,6 @@
 
 import React from 'react';
-import type { SimulationParams } from '../types';
+import type { SimulationParams, InvestmentFrequency } from '../types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
 import { Label } from './ui/Label';
 import { Input } from './ui/Input';
@@ -39,6 +39,13 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
         setParams(prev => ({
             ...prev,
             selectedAsset: e.target.value,
+        }));
+    };
+
+    const handleFrequencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setParams(prev => ({
+            ...prev,
+            frequency: e.target.value as InvestmentFrequency,
         }));
     };
 
@@ -102,11 +109,27 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
 
                         {/* Basic Settings */}
                         <div className="space-y-4 rounded-lg bg-secondary/30 p-4 border border-border/50">
-                            <div className="space-y-2">
-                                <Label htmlFor="weeklyBudget" className="text-foreground/90">{t('form.weeklyBudget')}</Label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                                    <Input id="weeklyBudget" name="weeklyBudget" type="number" value={params.weeklyBudget} onChange={handleChange} min="1" className="text-base pl-7" />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="baseBudget" className="text-foreground/90">{t('form.baseBudget')}</Label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
+                                        <Input id="baseBudget" name="baseBudget" type="number" value={params.baseBudget} onChange={handleChange} min="1" className="text-base pl-7" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="frequency" className="text-foreground/90">{t('form.frequency')}</Label>
+                                    <select
+                                        id="frequency"
+                                        name="frequency"
+                                        value={params.frequency}
+                                        onChange={handleFrequencyChange}
+                                        className="w-full h-10 px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    >
+                                        <option value="daily">{t('form.frequencyDaily')}</option>
+                                        <option value="weekly">{t('form.frequencyWeekly')}</option>
+                                        <option value="monthly">{t('form.frequencyMonthly')}</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -164,7 +187,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                 <div className="grid grid-cols-3 gap-2 items-center text-muted-foreground text-center border border-dashed border-border/50 rounded-md p-2 bg-background/20">
                                     <span className="text-left px-1 text-xs uppercase tracking-wide opacity-70">{t('form.rsiBaseWhen')}</span>
                                     <span className="text-xs">{`${params.rsiLow} - ${params.rsiHigh}`}</span>
-                                    <span className="font-mono">{`$${params.weeklyBudget}`}</span>
+                                    <span className="font-mono">{`$${params.baseBudget}`}</span>
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-2 items-center">
@@ -216,10 +239,10 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                             </h4>
                             <div className="space-y-4 rounded-lg bg-secondary/30 p-4 border border-border/50">
                                 <div className="space-y-2">
-                                    <Label htmlFor="vaWeeklyGrowth">{t('form.weeklyGrowth')}</Label>
+                                    <Label htmlFor="vaPeriodGrowth">{t('form.periodGrowth')}</Label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                                        <Input id="vaWeeklyGrowth" name="vaWeeklyGrowth" type="number" value={params.vaWeeklyGrowth} onChange={handleChange} min="0" className="pl-7" />
+                                        <Input id="vaPeriodGrowth" name="vaPeriodGrowth" type="number" value={params.vaPeriodGrowth} onChange={handleChange} min="0" className="pl-7" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">

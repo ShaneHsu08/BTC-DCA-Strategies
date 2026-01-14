@@ -1,3 +1,5 @@
+export type InvestmentFrequency = 'daily' | 'weekly' | 'monthly';
+
 export interface PriceDataPoint {
     date: string;
     close: number;
@@ -6,7 +8,8 @@ export interface PriceDataPoint {
 
 export interface SimulationParams {
     selectedAsset: string;
-    weeklyBudget: number;
+    frequency: InvestmentFrequency;
+    baseBudget: number;
     startDate: string;
     endDate: string;
 
@@ -23,7 +26,7 @@ export interface SimulationParams {
     // Value Averaging
     vaMaxBuyCap: number;
     vaMaxSellCap: number;
-    vaWeeklyGrowth: number;
+    vaPeriodGrowth: number;
 }
 
 export interface TimeSeriesPoint {
@@ -33,7 +36,7 @@ export interface TimeSeriesPoint {
     portfolioValue: number;
     averageCostBasis: number;
     usdInvested: number;
-    weeklyInvestment: number;
+    periodInvestment: number;
 }
 
 export interface Metrics {

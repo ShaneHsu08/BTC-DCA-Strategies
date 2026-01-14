@@ -29,7 +29,7 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
             date: translatedData[0].timeSeries[index].date,
         };
         translatedData.forEach(strategy => {
-            point[strategy.strategyName] = strategy.timeSeries[index].weeklyInvestment;
+            point[strategy.strategyName] = strategy.timeSeries[index].periodInvestment;
         });
         return point;
     });

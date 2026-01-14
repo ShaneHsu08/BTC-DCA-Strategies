@@ -116,8 +116,8 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
                 </Card>
                 <Card className="glass-panel">
                     <CardHeader>
-                        <CardTitle>{t('results.charts.weeklyInvestmentTitle')}</CardTitle>
-                        <CardDescription>{t('results.charts.weeklyInvestmentDescription')}</CardDescription>
+                        <CardTitle>{t('results.charts.periodInvestmentTitle')}</CardTitle>
+                        <CardDescription>{t('results.charts.periodInvestmentDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <InvestmentChart data={results} />
