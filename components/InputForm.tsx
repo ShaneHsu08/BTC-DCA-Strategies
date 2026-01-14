@@ -112,10 +112,10 @@ const SectionHeader: React.FC<{
     tooltip?: string;
 }> = ({ icon, title, tooltip }) => (
     <div className="flex items-center gap-2.5 mb-4">
-        <div className="p-2 rounded-lg bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20">
+        <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
             {icon}
         </div>
-        <h4 className="font-semibold text-foreground/90">{title}</h4>
+        <h4 className="font-semibold text-foreground/90 text-balance">{title}</h4>
         {tooltip && (
             <Tooltip>
                 <TooltipTrigger asChild>
@@ -180,12 +180,12 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
 
     // Custom select styling
     const selectClass = `
-        w-full h-10 px-3 py-2 text-sm 
-        bg-background/80 backdrop-blur-sm
+        w-full h-10 px-3 py-2 text-sm
+        bg-background/80
         border border-border/60 rounded-xl
         focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/60
         hover:border-primary/40
-        transition-all duration-300
+        transition-colors duration-150
         cursor-pointer
         appearance-none
         bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e')]
@@ -193,13 +193,10 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
     `;
 
     return (
-        <Card className="overflow-hidden relative">
-            {/* Decorative gradient */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary" />
-
+        <Card className="overflow-hidden">
             <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+                    <div className="p-2.5 rounded-xl bg-primary/15 border border-primary/20">
                         <SettingsIcon />
                     </div>
                     <div>
@@ -214,7 +211,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                     <form onSubmit={(e) => { e.preventDefault(); onRunSimulation(); }} className="space-y-6">
 
                         {/* Asset Selector Section */}
-                        <div className="space-y-3 rounded-xl bg-gradient-to-br from-accent/10 via-primary/5 to-transparent p-4 border border-accent/20">
+                        <div className="space-y-3 rounded-xl bg-accent/5 p-4 border border-accent/20">
                             <Label htmlFor="selectedAsset" className="text-foreground/90 font-semibold text-sm flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-accent" />
                                 {t('form.selectAsset') || 'Select Asset'}
@@ -237,7 +234,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                 ))}
                             </select>
                             {selectedAsset && (
-                                <p className="text-xs text-muted-foreground mt-2 pl-1">{selectedAsset.description}</p>
+                                <p className="text-xs text-muted-foreground mt-2 pl-1 text-pretty">{selectedAsset.description}</p>
                             )}
                         </div>
 

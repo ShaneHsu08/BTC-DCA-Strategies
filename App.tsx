@@ -82,26 +82,9 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-background text-foreground antialiased relative">
-            {/* Background decorative elements - only show in dark mode */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden hidden dark:block">
-                <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-accent/5 to-transparent rounded-full blur-3xl" />
-                <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-gradient-to-r from-primary/3 to-transparent rounded-full blur-3xl" />
-            </div>
-
-            {/* Light mode subtle pattern */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden block dark:hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] via-transparent to-accent/[0.02]" />
-            </div>
-
-            {/* Grid pattern overlay */}
-            <div className="fixed inset-0 pointer-events-none opacity-[0.015] dark:opacity-[0.03]">
-                <div className="absolute inset-0 grid-pattern" />
-            </div>
-
             <Header />
 
-            <main className="container mx-auto p-4 md:p-8 relative z-10">
+            <main className="container mx-auto p-4 md:p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                     {/* Sidebar Form */}
                     <div className="lg:col-span-5 xl:col-span-4">
@@ -119,7 +102,7 @@ const App: React.FC = () => {
                     <div className="lg:col-span-7 xl:col-span-8">
                         {/* Error Alert */}
                         {error && (
-                            <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/30 backdrop-blur-sm fade-in">
+                            <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/30 fade-in">
                                 <div className="flex items-start gap-3">
                                     <div className="p-1.5 rounded-lg bg-destructive/20">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-destructive">
@@ -129,8 +112,8 @@ const App: React.FC = () => {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-destructive">{t('error.title')}</h3>
-                                        <p className="text-sm text-destructive/80 mt-0.5">{error}</p>
+                                        <h3 className="font-semibold text-destructive text-balance">{t('error.title')}</h3>
+                                        <p className="text-sm text-destructive/80 mt-0.5 text-pretty">{error}</p>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +127,7 @@ const App: React.FC = () => {
                 <footer className="mt-16 pt-8 border-t border-border/30">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         {/* Disclaimer */}
-                        <p className="text-sm text-muted-foreground text-center md:text-left max-w-2xl">
+                        <p className="text-sm text-muted-foreground text-center md:text-left max-w-2xl text-pretty">
                             {t('footer.disclaimer')}
                         </p>
 

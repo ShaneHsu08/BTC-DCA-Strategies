@@ -38,6 +38,13 @@
   /* Font families */
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Z-index scale - use these instead of arbitrary values */
+  --z-base: 0;
+  --z-above: 10;
+  --z-sticky: 50;
+  --z-tooltip: 60;
+  --z-modal: 70;
 }
 
 @layer base {
@@ -159,7 +166,7 @@
 }
 
 /* =======================================
-   Custom Scrollbar (Web3 Themed)
+   Custom Scrollbar
    ======================================= */
 ::-webkit-scrollbar {
   width: 8px;
@@ -172,422 +179,154 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      hsl(var(--primary) / 0.6) 0%,
-      hsl(var(--accent) / 0.6) 100%);
+  background: hsl(var(--primary) / 0.5);
   border-radius: 4px;
   border: 2px solid hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--accent)) 100%);
+  background: hsl(var(--primary) / 0.7);
 }
 
 /* =======================================
-   Premium Glassmorphism Cards
+   Card Panel Styling
+
+   IMPORTANT: Elements with backdrop-filter must remain static.
+   Never animate transform, opacity, or other properties on these
+   elements as it forces expensive GPU recomposition.
    ======================================= */
 .glass-panel {
-  position: relative;
-  background: linear-gradient(135deg,
-      hsl(var(--card) / 0.85) 0%,
-      hsl(var(--card) / 0.7) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: hsl(var(--card) / 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid hsl(var(--border) / 0.5);
-  box-shadow:
-    0 0 0 1px hsl(var(--primary) / 0.05),
-    0 4px 24px -4px hsl(var(--background) / 0.5),
-    0 8px 32px -8px hsl(var(--primary) / 0.1);
+  box-shadow: 0 4px 16px -4px hsl(var(--background) / 0.3);
 }
 
 .dark .glass-panel {
+  background: hsl(var(--card) / 0.9);
   border: 1px solid hsl(var(--border) / 0.3);
-  box-shadow:
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 4px 24px -4px hsl(0 0% 0% / 0.5),
-    0 8px 32px -8px hsl(var(--primary) / 0.15),
-    inset 0 1px 0 0 hsl(var(--foreground) / 0.05);
+  box-shadow: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
 }
 
 .light .glass-panel {
-  background: linear-gradient(135deg,
-      hsl(var(--card) / 0.95) 0%,
-      hsl(var(--card) / 0.9) 100%);
-  border: 1px solid hsl(var(--border) / 0.8);
-  box-shadow:
-    0 1px 3px 0 hsl(0 0% 0% / 0.1),
-    0 4px 20px -4px hsl(0 0% 0% / 0.1);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.6);
+  box-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.08);
 }
 
 .glass-input {
   @apply bg-background/80 border border-border/50 rounded-lg;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.15s ease-out;
 }
 
 .glass-input:focus {
   @apply border-primary/50 ring-2 ring-primary/20;
-  box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.3);
 }
+
 
 /* =======================================
-   Web3 Neon Effects
-   ======================================= */
-.neon-glow-blue {
-  box-shadow:
-    0 0 5px hsl(var(--neon-blue) / 0.3),
-    0 0 10px hsl(var(--neon-blue) / 0.2),
-    0 0 20px hsl(var(--neon-blue) / 0.1);
-}
-
-.neon-glow-green {
-  box-shadow:
-    0 0 5px hsl(var(--neon-green) / 0.3),
-    0 0 10px hsl(var(--neon-green) / 0.2),
-    0 0 20px hsl(var(--neon-green) / 0.1);
-}
-
-.neon-glow-orange {
-  box-shadow:
-    0 0 5px hsl(var(--bitcoin-orange) / 0.4),
-    0 0 10px hsl(var(--bitcoin-orange) / 0.3),
-    0 0 20px hsl(var(--bitcoin-orange) / 0.2);
-}
-
-.neon-border {
-  position: relative;
-}
-
-.neon-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg,
-      hsl(var(--primary) / 0.5) 0%,
-      hsl(var(--accent) / 0.5) 50%,
-      hsl(var(--neon-green) / 0.5) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.neon-border:hover::before {
-  opacity: 1;
-}
-
-/* =======================================
-   Animated Gradient Backgrounds
+   Background Utilities
    ======================================= */
 .gradient-animated {
-  background: linear-gradient(-45deg,
-      hsl(var(--primary) / 0.08),
-      hsl(var(--accent) / 0.08),
-      hsl(var(--neon-green) / 0.08),
-      hsl(var(--neon-purple) / 0.08));
-  background-size: 400% 400%;
-  animation: gradient-shift 20s ease infinite;
-}
-
-.gradient-mesh {
-  background:
-    radial-gradient(at 40% 20%, hsl(var(--primary) / 0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, hsl(var(--accent) / 0.12) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, hsl(var(--neon-purple) / 0.1) 0px, transparent 50%),
-    radial-gradient(at 80% 50%, hsl(var(--neon-green) / 0.08) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsl(var(--primary) / 0.1) 0px, transparent 50%);
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
+  background: hsl(var(--primary) / 0.05);
 }
 
 /* =======================================
-   Card Hover Effects (Investment UX)
+   Card Hover Effects
    ======================================= */
 .card-glow {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.15s ease-out;
 }
 
 .card-glow:hover {
-  transform: translateY(-4px);
   box-shadow:
-    0 20px 40px -15px hsl(var(--primary) / 0.25),
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 0 60px -30px hsl(var(--accent) / 0.3);
-}
-
-.card-crypto {
-  position: relative;
-  overflow: hidden;
-}
-
-.card-crypto::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      transparent,
-      hsl(var(--primary) / 0.05),
-      hsl(var(--accent) / 0.05),
-      transparent);
-  animation: card-shimmer 8s ease-in-out infinite;
-}
-
-@keyframes card-shimmer {
-
-  0%,
-  100% {
-    left: -100%;
-  }
-
-  50% {
-    left: 100%;
-  }
+    0 8px 24px -8px hsl(var(--primary) / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.1);
 }
 
 /* =======================================
-   Premium Button Effects
+   Button Effects
    ======================================= */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.3),
-      transparent);
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    left: -100%;
-  }
-
-  100% {
-    left: 100%;
-  }
-}
-
 .btn-web3 {
-  background: linear-gradient(135deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--primary) / 0.9) 50%,
-      hsl(var(--accent) / 0.8) 100%);
-  background-size: 200% 200%;
-  animation: btn-gradient 5s ease infinite;
+  background: hsl(var(--primary));
   box-shadow:
-    0 4px 15px -3px hsl(var(--primary) / 0.4),
-    0 0 0 1px hsl(var(--primary) / 0.2),
-    inset 0 1px 0 0 hsl(var(--foreground) / 0.1);
+    0 4px 12px -3px hsl(var(--primary) / 0.4),
+    0 0 0 1px hsl(var(--primary) / 0.2);
 }
 
 .btn-web3:hover {
-  background-position: 100% 50%;
+  background: hsl(var(--primary) / 0.9);
   box-shadow:
-    0 8px 25px -5px hsl(var(--primary) / 0.5),
-    0 0 0 1px hsl(var(--primary) / 0.3),
-    0 0 40px -10px hsl(var(--accent) / 0.4),
-    inset 0 1px 0 0 hsl(var(--foreground) / 0.15);
+    0 6px 16px -4px hsl(var(--primary) / 0.5),
+    0 0 0 1px hsl(var(--primary) / 0.3);
 }
 
-@keyframes btn-gradient {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* =======================================
-   Pulse Glow Animation (for important elements)
-   ======================================= */
-.glow-pulse {
-  animation: glow-pulse 2.5s ease-in-out infinite;
-}
-
-@keyframes glow-pulse {
-
-  0%,
-  100% {
-    box-shadow:
-      0 0 5px hsl(var(--accent) / 0.4),
-      0 0 10px hsl(var(--accent) / 0.3),
-      0 0 20px hsl(var(--accent) / 0.2);
-  }
-
-  50% {
-    box-shadow:
-      0 0 10px hsl(var(--accent) / 0.6),
-      0 0 25px hsl(var(--accent) / 0.4),
-      0 0 40px hsl(var(--accent) / 0.3);
-  }
-}
-
-/* =======================================
-   Float Animation
-   ======================================= */
-.float-animation {
-  animation: float 4s ease-in-out infinite;
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-8px);
-  }
-}
 
 /* =======================================
    Fade In Animations
    ======================================= */
 .fade-in {
-  animation: fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fade-in 0.2s ease-out forwards;
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .stagger-fade>* {
   opacity: 0;
-  animation: fade-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fade-in 0.15s ease-out forwards;
 }
 
 .stagger-fade>*:nth-child(1) {
-  animation-delay: 0.05s;
+  animation-delay: 0.03s;
 }
 
 .stagger-fade>*:nth-child(2) {
-  animation-delay: 0.1s;
+  animation-delay: 0.06s;
 }
 
 .stagger-fade>*:nth-child(3) {
-  animation-delay: 0.15s;
+  animation-delay: 0.09s;
 }
 
 .stagger-fade>*:nth-child(4) {
-  animation-delay: 0.2s;
+  animation-delay: 0.12s;
 }
 
 .stagger-fade>*:nth-child(5) {
-  animation-delay: 0.25s;
+  animation-delay: 0.15s;
 }
 
 .stagger-fade>*:nth-child(6) {
-  animation-delay: 0.3s;
+  animation-delay: 0.18s;
 }
 
 /* =======================================
-   Gradient Text (Web3 Style)
+   Text Utilities
    ======================================= */
 .text-gradient {
-  background: linear-gradient(135deg,
-      hsl(var(--foreground)) 0%,
-      hsl(var(--primary)) 40%,
-      hsl(var(--accent)) 60%,
-      hsl(var(--foreground)) 100%);
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: text-gradient-shift 6s ease infinite;
+  color: hsl(var(--primary));
 }
 
 .text-gradient-accent {
-  background: linear-gradient(135deg,
-      hsl(var(--accent)) 0%,
-      hsl(var(--primary)) 50%,
-      hsl(var(--accent)) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-@keyframes text-gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
+  color: hsl(var(--accent));
 }
 
 /* =======================================
-   Gradient Border Utility
+   Border Utility
    ======================================= */
 .gradient-border {
-  position: relative;
   background: hsl(var(--card));
   border-radius: var(--radius);
-}
-
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg,
-      hsl(var(--primary) / 0.6) 0%,
-      hsl(var(--accent) / 0.6) 50%,
-      hsl(var(--neon-green) / 0.6) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  border: 1px solid hsl(var(--primary) / 0.3);
 }
 
 /* =======================================
@@ -742,10 +481,6 @@
     transition-duration: 0.01ms !important;
   }
 
-  .gradient-animated,
-  .shimmer::after,
-  .card-crypto::after,
-  .text-gradient,
   .loader-premium,
   .loader-premium::before,
   .loader-premium::after {
@@ -808,13 +543,6 @@ input[type="number"]:focus::-webkit-outer-spin-button {
   opacity: 1;
 }
 
-/* =======================================
-   Tooltip Styling
-   ======================================= */
-[role="tooltip"] {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
 
 /* =======================================
    Additional Web3 Decorative Elements

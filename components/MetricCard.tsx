@@ -36,30 +36,21 @@ export const MetricCard: React.FC<MetricCardProps> = ({ title, value, descriptio
     const hasPercentage = value.includes('%');
 
     return (
-        <Card className="glass-panel overflow-hidden relative group card-glow card-crypto neon-border">
-            {/* Animated mesh gradient background */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-primary/20 via-accent/10 to-transparent rounded-full blur-2xl" />
-                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-gradient-to-tr from-accent/15 to-transparent rounded-full blur-2xl" />
-            </div>
-
-            {/* Top gradient accent line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.15em]">
+        <Card className="glass-panel overflow-hidden relative card-glow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.15em] text-balance">
                     {title}
                 </CardTitle>
                 {/* Status indicator */}
-                <div className="w-2 h-2 rounded-full bg-green-500/80 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                <div className="w-2 h-2 rounded-full bg-green-500/80" />
             </CardHeader>
 
-            <CardContent className="relative z-10 pt-1">
-                {/* Main value with enhanced typography */}
+            <CardContent className="pt-1">
+                {/* Main value */}
                 <div
                     className={`text-3xl md:text-4xl font-bold tracking-tight metric-value ${hasPercentage && isPositive
-                            ? 'bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent'
-                            : 'bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent'
+                            ? 'text-green-500'
+                            : 'text-foreground'
                         }`}
                 >
                     {value}
@@ -67,7 +58,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({ title, value, descriptio
 
                 {/* Strategy name badge */}
                 <div className="flex items-center gap-2 pt-3">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-accent/10 to-primary/10 border border-accent/20">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20">
                         <TrophyIcon />
                         <span className="text-xs font-medium text-accent/90 truncate max-w-[120px]">
                             {description}
@@ -75,13 +66,6 @@ export const MetricCard: React.FC<MetricCardProps> = ({ title, value, descriptio
                     </div>
                 </div>
             </CardContent>
-
-            {/* Corner decoration */}
-            <div className="absolute bottom-0 right-0 w-16 h-16 opacity-5">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle cx="100" cy="100" r="80" fill="currentColor" />
-                </svg>
-            </div>
         </Card>
     );
 };

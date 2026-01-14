@@ -45,34 +45,26 @@ export const Header: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/70 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/50">
-            {/* Subtle gradient accent line at top */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-            
+        <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
                 <div className="flex items-center gap-4">
-                    {/* Logo Container with glow effect */}
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-primary/30 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="relative bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 p-2.5 rounded-xl border border-accent/20 glow-pulse cursor-pointer">
-                            <BitcoinLogo className="w-7 h-7" />
-                        </div>
+                    {/* Logo Container */}
+                    <div className="p-2.5 rounded-xl bg-accent/10 border border-accent/20 hover:bg-accent/15 transition-colors duration-150">
+                        <BitcoinLogo className="w-7 h-7" />
                     </div>
-                    
+
                     {/* Title Section */}
-                    <div className="relative">
+                    <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
+                            <h1 className="text-lg md:text-xl font-bold tracking-tight text-foreground text-balance">
                                 {t('header.title')}
                             </h1>
-                            {/* Web3 style badge */}
-                            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/20">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            {/* Status badge */}
+                            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                                 Live
                             </span>
                         </div>
-                        {/* Animated gradient underline */}
-                        <div className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[gradient-shift_4s_ease_infinite] rounded-full" />
                     </div>
                 </div>
                 

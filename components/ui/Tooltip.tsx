@@ -83,7 +83,7 @@ export const TooltipContent: React.FC<{ children: React.ReactNode; className?: s
     
     return (
         <div
-            className={`absolute z-10 w-max max-w-xs p-2 rounded-md bg-popover text-popover-foreground text-sm shadow-md animate-in fade-in-0 zoom-in-95 bottom-full mb-2 ${className}`}
+            className={`absolute z-60 w-max max-w-xs p-2 rounded-md bg-popover text-popover-foreground text-sm shadow-md bottom-full mb-2 ${className}`}
             style={{
                 left: '50%',
                 transform: 'translateX(-50%)',

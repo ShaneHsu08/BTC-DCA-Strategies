@@ -12,18 +12,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             inline-flex items-center justify-center gap-2
             rounded-xl font-semibold
             ring-offset-background
-            transition-all duration-300 ease-out
+            transition-colors duration-150 ease-out
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
             disabled:pointer-events-none disabled:opacity-50
-            active:scale-[0.98]
             cursor-pointer
         `;
 
         const variantClasses = {
             default: `
-                btn-web3 shimmer
+                btn-web3
                 text-white
-                hover:-translate-y-0.5
             `,
             outline: `
                 border-2 border-primary/50

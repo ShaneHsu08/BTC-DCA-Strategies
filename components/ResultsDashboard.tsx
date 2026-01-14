@@ -17,14 +17,10 @@ const LoadingSpinner: React.FC = () => {
     const { t } = useLanguage();
     return (
         <div className="flex flex-col justify-center items-center h-full gap-6">
-            <div className="relative">
-                <div className="loader-premium" />
-                {/* Outer glow ring */}
-                <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse" />
-            </div>
+            <div className="loader-premium" />
             <div className="text-center space-y-2">
-                <p className="text-foreground font-medium">{t('results.loading') || 'Running simulation...'}</p>
-                <p className="text-muted-foreground text-sm animate-pulse">
+                <p className="text-foreground font-medium text-balance">{t('results.loading') || 'Running simulation...'}</p>
+                <p className="text-muted-foreground text-sm text-pretty">
                     {t('results.loadingDescription') || 'Analyzing market data and strategies'}
                 </p>
             </div>
@@ -35,61 +31,43 @@ const LoadingSpinner: React.FC = () => {
 const InitialState: React.FC = () => {
     const { t } = useLanguage();
     return (
-        <Card className="h-full flex flex-col justify-center items-center text-center p-10 border-dashed border-2 border-primary/20 gradient-animated relative overflow-hidden">
-            {/* Decorative gradient orbs */}
-            <div className="absolute top-10 right-10 w-40 h-40 bg-gradient-to-br from-primary/25 to-accent/15 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-tr from-accent/20 to-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-radial from-primary/5 to-transparent rounded-full" />
-
-            {/* Grid pattern overlay */}
-            <div className="absolute inset-0 grid-pattern opacity-30" />
-
-            <div className="mb-8 float-animation relative">
-                <div className="relative">
-                    {/* Outer glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30 rounded-2xl blur-xl" />
-                    <div className="relative p-5 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 border border-primary/30 neon-glow-blue">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="56"
-                            height="56"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="url(#chartGradient)"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <defs>
-                                <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                                    <stop offset="100%" stopColor="hsl(var(--accent))" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M3 3v18h18" />
-                            <path d="m19 9-5 5-4-4-3 3" />
-                        </svg>
-                    </div>
+        <Card className="h-full flex flex-col justify-center items-center text-center p-10 border-dashed border-2 border-primary/20 bg-primary/5">
+            <div className="mb-8">
+                <div className="p-5 rounded-2xl bg-primary/10 border border-primary/30">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="56"
+                        height="56"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-primary"
+                    >
+                        <path d="M3 3v18h18" />
+                        <path d="m19 9-5 5-4-4-3 3" />
+                    </svg>
                 </div>
             </div>
 
-            <CardHeader className="p-0 relative z-10 max-w-lg">
-                <CardTitle className="text-2xl md:text-3xl text-gradient mb-3">
+            <CardHeader className="p-0 max-w-lg">
+                <CardTitle className="text-2xl md:text-3xl text-primary mb-3 text-balance">
                     {t('results.initialState.title')}
                 </CardTitle>
-                <CardDescription className="mt-3 text-base leading-relaxed">
+                <CardDescription className="mt-3 text-base leading-relaxed text-pretty">
                     {t('results.initialState.description')}
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-0 mt-8 relative z-10">
+            <CardContent className="p-0 mt-8">
                 <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
                     {/* Feature badges */}
-                    {['DCA', 'RSI-based', 'Value Averaging'].map((feature, i) => (
+                    {['DCA', 'RSI-based', 'Value Averaging'].map((feature) => (
                         <div
                             key={feature}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
-                            style={{ animationDelay: `${i * 0.1}s` }}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -126,13 +104,13 @@ const ChartCard: React.FC<{
         <CardHeader className="pb-2">
             <div className="flex items-center gap-3">
                 {icon && (
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+                    <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
                         {icon}
                     </div>
                 )}
                 <div>
-                    <CardTitle className="text-base">{title}</CardTitle>
-                    <CardDescription className="mt-1">{description}</CardDescription>
+                    <CardTitle className="text-base text-balance">{title}</CardTitle>
+                    <CardDescription className="mt-1 text-pretty">{description}</CardDescription>
                 </div>
             </div>
         </CardHeader>
