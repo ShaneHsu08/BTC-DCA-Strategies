@@ -35,7 +35,7 @@ The biggest enemy of DCA is not the market, but giving up halfway. The key is to
 
 ## About This Application
 - Initial release includes BTC data from 2011-01-03 to 2025-09-15. Please select backtest dates within this range. The next version will support real-time data.
-- Currently, the simulation only models DCA investments made every Monday. Although some statistics suggest that consistently investing on Mondays yields slightly higher returns compared to other days of the week (Tuesday to Sunday), it is still recommended to choose a schedule that best suits you—after all, consistency is the key to success.
+- Supports flexible investment frequencies: Daily, Weekly, or Monthly. Choose the schedule that best suits your lifestyle and cash flow.
 - Transaction fees are not considered for now.
 - Results are for reference only.
 
@@ -125,7 +125,8 @@ npm run build
 ## User Guide
 
 ### 1. Set Parameters
-- **Base Weekly Budget**: Set weekly investment amount
+- **Investment Budget**: Set base investment amount per period
+- **Investment Frequency**: Choose between Daily, Weekly, or Monthly
 - **Time Range**: Select simulation start and end dates
 - **Dynamic DCA Parameters**: Configure RSI thresholds and corresponding investment amounts
 - **Value Averaging Parameters**: Set target growth and buy/sell limits
@@ -141,7 +142,7 @@ Click the "Run Simulation" button, and the system will calculate the performance
 ## Strategy Descriptions
 
 ### Standard DCA
-- Invest a fixed amount weekly
+- Invest a fixed amount at regular intervals (Daily/Weekly/Monthly)
 - Simple to execute, low psychological pressure
 - Suitable for long-term investors
 
@@ -152,7 +153,7 @@ Click the "Run Simulation" button, and the system will calculate the performance
 - Balance risk and return
 
 ### Value Averaging
-- Goal: Portfolio value increases by a fixed amount weekly
+- Goal: Portfolio value increases by a fixed amount each period
 - Buy when below target, sell when above target
 - Set buy/sell limits to avoid extreme operations
 
