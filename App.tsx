@@ -5,7 +5,6 @@ import { ResultsDashboard } from './components/ResultsDashboard';
 import { runSimulation } from './services/simulationService';
 import type { SimulationParams, StrategyResult } from './types';
 import { getPriceDataForAsset } from './data/priceData';
-import { getAssetById } from './data/assetRegistry';
 import { useLanguage } from './i18n/LanguageProvider';
 
 // Social icons

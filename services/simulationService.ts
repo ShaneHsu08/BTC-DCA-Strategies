@@ -1,105 +1,70 @@
 import type { SimulationParams, PriceDataPoint, StrategyResult, Metrics, TimeSeriesPoint, InvestmentFrequency } from '../types';
 
-/**
- * Sample price data based on investment frequency
- * - Daily: Use every data point (assuming weekly data, interpolate to daily-like granularity)
- * - Weekly: Use data as-is
- * - Monthly: Sample approximately every 4 weeks
- */
-const samplePriceData = (priceData: PriceDataPoint[], frequency: InvestmentFrequency): PriceDataPoint[] => {
-    switch (frequency) {
-        case 'daily':
-            // Since source data is weekly, we'll use every data point to simulate more frequent investments
-            // In a real app, you'd have actual daily data
-            return priceData;
-        case 'weekly':
-            return priceData;
-        case 'monthly':
-            // Sample every ~4 weeks for monthly investments
-            return priceData.filter((_, index) => index % 4 === 0);
-        default:
-            return priceData;
-    }
+const FREQUENCY_CONFIG: Record<InvestmentFrequency, { sampleRate: number; periodsPerYear: number }> = {
+    daily: { sampleRate: 1, periodsPerYear: 365 },
+    weekly: { sampleRate: 1, periodsPerYear: 52 },
+    monthly: { sampleRate: 4, periodsPerYear: 12 },
 };
 
-/**
- * Get the annualization factor for Sharpe ratio based on frequency
- */
-const getAnnualizationFactor = (frequency: InvestmentFrequency): number => {
-    switch (frequency) {
-        case 'daily':
-            return Math.sqrt(365);
-        case 'weekly':
-            return Math.sqrt(52);
-        case 'monthly':
-            return Math.sqrt(12);
-        default:
-            return Math.sqrt(52);
-    }
+function samplePriceData(priceData: PriceDataPoint[], frequency: InvestmentFrequency): PriceDataPoint[] {
+    const { sampleRate } = FREQUENCY_CONFIG[frequency];
+    if (sampleRate === 1) return priceData;
+    return priceData.filter((_, index) => index % sampleRate === 0);
+}
+
+function getAnnualizationFactor(frequency: InvestmentFrequency): number {
+    return Math.sqrt(FREQUENCY_CONFIG[frequency].periodsPerYear);
+}
+
+const EMPTY_METRICS: Metrics = {
+    totalUsdInvested: 0,
+    totalAssetAccumulated: 0,
+    finalPortfolioValue: 0,
+    averageCostBasis: 0,
+    roiPercentage: 0,
+    maxDrawdown: 0,
+    sharpeRatio: 0,
 };
 
-const calculateMetrics = (timeSeries: TimeSeriesPoint[], frequency: InvestmentFrequency): Metrics => {
-    if (timeSeries.length < 2) {
-        return {
-            totalUsdInvested: 0,
-            totalAssetAccumulated: 0,
-            finalPortfolioValue: 0,
-            averageCostBasis: 0,
-            roiPercentage: 0,
-            maxDrawdown: 0,
-            sharpeRatio: 0,
-        };
-    }
-
-    const lastPoint = timeSeries[timeSeries.length - 1];
-    const totalUsdInvested = lastPoint.usdInvested;
-    const finalPortfolioValue = lastPoint.portfolioValue;
-
-    let peakPortfolioValue = 0;
+function calculateMaxDrawdown(timeSeries: TimeSeriesPoint[]): number {
+    let peakValue = 0;
     let maxDrawdown = 0;
 
     for (const point of timeSeries) {
-        if (point.portfolioValue > peakPortfolioValue) {
-            peakPortfolioValue = point.portfolioValue;
-        }
-        const drawdown = peakPortfolioValue > 0 ? (peakPortfolioValue - point.portfolioValue) / peakPortfolioValue : 0;
-        if (drawdown > maxDrawdown) {
-            maxDrawdown = drawdown;
+        peakValue = Math.max(peakValue, point.portfolioValue);
+        if (peakValue > 0) {
+            const drawdown = (peakValue - point.portfolioValue) / peakValue;
+            maxDrawdown = Math.max(maxDrawdown, drawdown);
         }
     }
+    return maxDrawdown;
+}
 
-    const roi = totalUsdInvested > 0 ? ((finalPortfolioValue - totalUsdInvested) / totalUsdInvested) * 100 : 0;
+function calculateSharpeRatio(timeSeries: TimeSeriesPoint[], frequency: InvestmentFrequency): number {
+    if (timeSeries.length < 3) return 0;
 
-    // Calculate Sharpe Ratio
-    const periodReturns: number[] = [];
-    for (let i = 1; i < timeSeries.length; i++) {
-        const previousValue = timeSeries[i - 1].portfolioValue;
-        if (previousValue > 0) {
-            const periodReturn = (timeSeries[i].portfolioValue - previousValue) / previousValue;
-            periodReturns.push(periodReturn);
-        } else {
-            periodReturns.push(0);
-        }
-    }
+    const periodReturns = timeSeries.slice(1).map((point, i) => {
+        const prevValue = timeSeries[i].portfolioValue;
+        return prevValue > 0 ? (point.portfolioValue - prevValue) / prevValue : 0;
+    });
 
-    let sharpeRatio = 0;
-    if (periodReturns.length > 1) {
-        const meanReturn = periodReturns.reduce((acc, val) => acc + val, 0) / periodReturns.length;
+    const meanReturn = periodReturns.reduce((sum, r) => sum + r, 0) / periodReturns.length;
+    const variance = periodReturns.reduce((sum, r) => sum + Math.pow(r - meanReturn, 2), 0) / (periodReturns.length - 1);
+    const stdDev = Math.sqrt(variance);
 
-        // 使用样本标准差（除以n-1而不是n）
-        const variance = periodReturns
-            .map(x => Math.pow(x - meanReturn, 2))
-            .reduce((a, b) => a + b) / (periodReturns.length - 1);
-        const stdDev = Math.sqrt(variance);
+    if (stdDev === 0) return 0;
+    return (meanReturn / stdDev) * getAnnualizationFactor(frequency);
+}
 
-        if (stdDev > 0) {
-            // 假设风险无风险利率为0（对于加密货币投资是合理的简化）
-            const periodSharpe = meanReturn / stdDev;
-            // 年化夏普比率 based on frequency
-            sharpeRatio = periodSharpe * getAnnualizationFactor(frequency);
-        }
-    }
+function calculateMetrics(timeSeries: TimeSeriesPoint[], frequency: InvestmentFrequency): Metrics {
+    if (timeSeries.length < 2) return EMPTY_METRICS;
 
+    const lastPoint = timeSeries[timeSeries.length - 1];
+    const { usdInvested: totalUsdInvested, portfolioValue: finalPortfolioValue } = lastPoint;
+
+    const roi = totalUsdInvested > 0
+        ? ((finalPortfolioValue - totalUsdInvested) / totalUsdInvested) * 100
+        : 0;
 
     return {
         totalUsdInvested,
@@ -107,33 +72,54 @@ const calculateMetrics = (timeSeries: TimeSeriesPoint[], frequency: InvestmentFr
         finalPortfolioValue,
         averageCostBasis: lastPoint.averageCostBasis,
         roiPercentage: roi,
-        maxDrawdown: maxDrawdown * 100,
-        sharpeRatio,
+        maxDrawdown: calculateMaxDrawdown(timeSeries) * 100,
+        sharpeRatio: calculateSharpeRatio(timeSeries, frequency),
     };
-};
+}
 
-const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let assetAccumulated = 0;
-    let usdInvested = 0;
+interface SimulationState {
+    assetAccumulated: number;
+    usdInvested: number;
+}
+
+function createTimeSeriesPoint(
+    point: PriceDataPoint,
+    state: SimulationState,
+    periodInvestment: number
+): TimeSeriesPoint {
+    const portfolioValue = state.assetAccumulated * point.close;
+    const averageCostBasis = state.usdInvested > 0 && state.assetAccumulated > 0
+        ? state.usdInvested / state.assetAccumulated
+        : 0;
+
+    return {
+        date: point.date,
+        price: point.close,
+        assetAccumulated: state.assetAccumulated,
+        portfolioValue,
+        averageCostBasis,
+        usdInvested: state.usdInvested,
+        periodInvestment,
+    };
+}
+
+function getDynamicInvestment(params: SimulationParams, rsi: number): number {
+    if (rsi <= params.rsiExtremeLow) return params.budgetExtremeLow;
+    if (rsi <= params.rsiLow) return params.budgetLow;
+    if (rsi >= params.rsiExtremeHigh) return params.budgetExtremeHigh;
+    if (rsi >= params.rsiHigh) return params.budgetHigh;
+    return params.baseBudget;
+}
+
+function runStandardDCA(params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult {
+    const state: SimulationState = { assetAccumulated: 0, usdInvested: 0 };
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
         const investment = params.baseBudget;
-        usdInvested += investment;
-        assetAccumulated += investment / point.close;
-
-        const portfolioValue = assetAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
-
-        timeSeries.push({
-            date: point.date,
-            price: point.close,
-            assetAccumulated,
-            portfolioValue,
-            averageCostBasis,
-            usdInvested,
-            periodInvestment: investment,
-        });
+        state.usdInvested += investment;
+        state.assetAccumulated += investment / point.close;
+        timeSeries.push(createTimeSeriesPoint(point, state, investment));
     }
 
     return {
@@ -141,40 +127,17 @@ const runStandardDCA = (params: SimulationParams, priceData: PriceDataPoint[]): 
         timeSeries,
         metrics: calculateMetrics(timeSeries, params.frequency),
     };
-};
+}
 
-const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let assetAccumulated = 0;
-    let usdInvested = 0;
+function runDynamicDCA(params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult {
+    const state: SimulationState = { assetAccumulated: 0, usdInvested: 0 };
     const timeSeries: TimeSeriesPoint[] = [];
 
     for (const point of priceData) {
-        let investment = params.baseBudget;
-        if (point.rsi <= params.rsiExtremeLow) {
-            investment = params.budgetExtremeLow;
-        } else if (point.rsi <= params.rsiLow) {
-            investment = params.budgetLow;
-        } else if (point.rsi >= params.rsiExtremeHigh) {
-            investment = params.budgetExtremeHigh;
-        } else if (point.rsi >= params.rsiHigh) {
-            investment = params.budgetHigh;
-        }
-
-        usdInvested += investment;
-        assetAccumulated += investment / point.close;
-
-        const portfolioValue = assetAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
-
-        timeSeries.push({
-            date: point.date,
-            price: point.close,
-            assetAccumulated,
-            portfolioValue,
-            averageCostBasis,
-            usdInvested,
-            periodInvestment: investment,
-        });
+        const investment = getDynamicInvestment(params, point.rsi);
+        state.usdInvested += investment;
+        state.assetAccumulated += investment / point.close;
+        timeSeries.push(createTimeSeriesPoint(point, state, investment));
     }
 
     return {
@@ -182,43 +145,26 @@ const runDynamicDCA = (params: SimulationParams, priceData: PriceDataPoint[]): S
         timeSeries,
         metrics: calculateMetrics(timeSeries, params.frequency),
     };
-};
+}
 
-const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult => {
-    let assetAccumulated = 0;
-    let usdInvested = 0;
-    let targetValue = 0;
+function runValueAveraging(params: SimulationParams, priceData: PriceDataPoint[]): StrategyResult {
+    const state: SimulationState = { assetAccumulated: 0, usdInvested: 0 };
     const timeSeries: TimeSeriesPoint[] = [];
+    let targetValue = 0;
 
     for (const point of priceData) {
         targetValue += params.vaPeriodGrowth;
-        const currentPortfolioValue = assetAccumulated * point.close;
+        const currentPortfolioValue = state.assetAccumulated * point.close;
         let investment = targetValue - currentPortfolioValue;
 
-        // Apply caps
-        if (investment > 0) { // Buying
-            investment = Math.min(investment, params.vaMaxBuyCap);
-        } else { // Selling
-            investment = Math.max(investment, -params.vaMaxSellCap);
-        }
+        // Apply caps: limit buying to maxBuyCap, selling to maxSellCap
+        investment = investment > 0
+            ? Math.min(investment, params.vaMaxBuyCap)
+            : Math.max(investment, -params.vaMaxSellCap);
 
-        usdInvested += investment;
-        assetAccumulated += investment / point.close;
-
-        if (assetAccumulated < 0) assetAccumulated = 0; // Can't have negative assets
-
-        const portfolioValue = assetAccumulated * point.close;
-        const averageCostBasis = usdInvested > 0 && assetAccumulated > 0 ? usdInvested / assetAccumulated : 0;
-
-        timeSeries.push({
-            date: point.date,
-            price: point.close,
-            assetAccumulated,
-            portfolioValue,
-            averageCostBasis,
-            usdInvested,
-            periodInvestment: investment,
-        });
+        state.usdInvested += investment;
+        state.assetAccumulated = Math.max(0, state.assetAccumulated + investment / point.close);
+        timeSeries.push(createTimeSeriesPoint(point, state, investment));
     }
 
     return {
@@ -229,26 +175,24 @@ const runValueAveraging = (params: SimulationParams, priceData: PriceDataPoint[]
 }
 
 
-export const runSimulation = (params: SimulationParams, allPriceData: PriceDataPoint[]): StrategyResult[] => {
+export function runSimulation(params: SimulationParams, allPriceData: PriceDataPoint[]): StrategyResult[] {
     const startDate = new Date(params.startDate);
     const endDate = new Date(params.endDate);
 
-    // First filter by date range
     const filteredPriceData = allPriceData.filter(point => {
         const pointDate = new Date(point.date);
         return pointDate >= startDate && pointDate <= endDate;
     });
 
-    // Then sample based on frequency
     const sampledPriceData = samplePriceData(filteredPriceData, params.frequency);
 
     if (sampledPriceData.length < 2) {
         throw new Error("Not enough data for the selected date range. Please select a wider range.");
     }
 
-    const standardDcaResult = runStandardDCA(params, sampledPriceData);
-    const dynamicDcaResult = runDynamicDCA(params, sampledPriceData);
-    const valueAveragingResult = runValueAveraging(params, sampledPriceData);
-
-    return [standardDcaResult, dynamicDcaResult, valueAveragingResult];
-};
+    return [
+        runStandardDCA(params, sampledPriceData),
+        runDynamicDCA(params, sampledPriceData),
+        runValueAveraging(params, sampledPriceData),
+    ];
+}

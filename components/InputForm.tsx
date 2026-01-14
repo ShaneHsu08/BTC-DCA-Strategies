@@ -6,7 +6,7 @@ import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/Tooltip';
 import { useLanguage } from '../i18n/LanguageProvider';
-import { assetRegistry, getAssetsByCategory, categoryNames, getAssetById } from '../data/assetRegistry';
+import { getAssetsByCategory, categoryNames, getAssetById } from '../data/assetRegistry';
 
 interface InputFormProps {
     params: SimulationParams;

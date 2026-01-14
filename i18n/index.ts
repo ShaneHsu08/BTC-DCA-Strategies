@@ -10,13 +10,13 @@ export const translations = {
 
 export type Language = keyof typeof translations;
 
-export const getTranslatedStrategyName = (strategyKey: string, lang: Language): string => {
+export function getNestedValue(obj: unknown, key: string): string | undefined {
+    return key.split('.').reduce<unknown>((o, k) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined), obj) as string | undefined;
+}
+
+export function getTranslatedStrategyName(strategyKey: string, lang: Language): string {
     const key = `strategies.${strategyKey}`;
-    const name = key.split('.').reduce((o, i) => (o ? o[i] : undefined), translations[lang] as any);
-    if (!name) {
-        // Fallback to English
-        const fallback = key.split('.').reduce((o, i) => (o ? o[i] : undefined), translations.en as any);
-        return fallback || strategyKey;
-    }
-    return name;
+    return getNestedValue(translations[lang], key)
+        ?? getNestedValue(translations.en, key)
+        ?? strategyKey;
 }

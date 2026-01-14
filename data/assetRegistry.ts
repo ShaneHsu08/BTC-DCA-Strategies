@@ -1,5 +1,3 @@
-import type { PriceDataPoint } from '../types';
-
 /**
  * Asset definition for all supported investable assets
  */

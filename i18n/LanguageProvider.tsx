@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
-import { translations, Language } from './index';
+import { translations, Language, getNestedValue } from './index';
 
 type LanguageContextType = {
     language: Language;
@@ -10,33 +10,25 @@ type LanguageContextType = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Helper to access nested properties of an object using a dot-notation string
-const getNestedTranslation = (obj: any, key: string): string => {
-    return key.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
+const LOCALE_MAP: Record<Language, string> = {
+    en: 'en-US',
+    zh: 'zh-CN',
+    ja: 'ja-JP',
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [language, setLanguage] = useState<Language>('en');
 
     const t = useCallback((key: string): string => {
-        const translation = getNestedTranslation(translations[language], key);
+        const translation = getNestedValue(translations[language], key);
         if (translation === undefined) {
             console.warn(`Translation key "${key}" not found for language "${language}".`);
-            // Fallback to English
-            const fallback = getNestedTranslation(translations.en, key);
-            return fallback || key;
+            return getNestedValue(translations.en, key) ?? key;
         }
         return translation;
     }, [language]);
 
-    const getLocale = useCallback((): string => {
-        const localeMap: Record<Language, string> = {
-            en: 'en-US',
-            zh: 'zh-CN',
-            ja: 'ja-JP',
-        };
-        return localeMap[language];
-    }, [language]);
+    const getLocale = useCallback((): string => LOCALE_MAP[language], [language]);
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t, getLocale }}>
