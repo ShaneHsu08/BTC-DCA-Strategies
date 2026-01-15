@@ -335,6 +335,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                             value={params.budgetExtremeLow}
                                             onChange={handleChange}
                                             className="text-center h-9 pl-4 text-green-500 font-bold font-mono"
+                                            aria-label="Budget for Extreme Low RSI"
                                         />
                                     </div>
                                 </div>
@@ -360,6 +361,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                             value={params.budgetLow}
                                             onChange={handleChange}
                                             className="text-center h-9 pl-4 text-emerald-500 font-semibold font-mono"
+                                            aria-label="Budget for Low RSI"
                                         />
                                     </div>
                                 </div>
@@ -398,6 +400,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                             value={params.budgetHigh}
                                             onChange={handleChange}
                                             className="text-center h-9 pl-4 text-amber-500 font-medium font-mono"
+                                            aria-label="Budget for High RSI"
                                         />
                                     </div>
                                 </div>
@@ -423,6 +426,7 @@ export const InputForm: React.FC<InputFormProps> = ({ params, setParams, onRunSi
                                             value={params.budgetExtremeHigh}
                                             onChange={handleChange}
                                             className="text-center h-9 pl-4 text-red-500 font-bold font-mono"
+                                            aria-label="Budget for Extreme High RSI"
                                         />
                                     </div>
                                 </div>

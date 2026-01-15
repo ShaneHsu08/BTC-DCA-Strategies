@@ -48,9 +48,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({ title, value, descriptio
             <CardContent className="pt-1">
                 {/* Main value */}
                 <div
-                    className={`text-3xl md:text-4xl font-bold tracking-tight metric-value ${hasPercentage && isPositive
-                            ? 'text-green-500'
-                            : 'text-foreground'
+                    className={`text-2xl md:text-2xl font-bold tracking-tight metric-value break-words ${hasPercentage && isPositive
+                        ? 'text-green-500'
+                        : 'text-foreground'
                         }`}
                 >
                     {value}
