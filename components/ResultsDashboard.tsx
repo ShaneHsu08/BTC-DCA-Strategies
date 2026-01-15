@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { StrategyResult } from '../types';
 import { MetricCard } from './MetricCard';
 import { ComparisonTable } from './ComparisonTable';
 import { PortfolioChart } from './PortfolioChart';
 import { InvestmentChart } from './InvestmentChart';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/Tabs';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { getTranslatedStrategyName } from '../i18n';
 
@@ -93,43 +94,16 @@ const InitialState: React.FC = () => {
     );
 };
 
-// Chart Card Component for consistent styling
-const ChartCard: React.FC<{
-    title: string;
-    description: string;
-    children: React.ReactNode;
-    icon?: React.ReactNode;
-}> = ({ title, description, children, icon }) => (
-    <Card className="glass-panel card-glow overflow-hidden">
-        <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-                {icon && (
-                    <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                        {icon}
-                    </div>
-                )}
-                <div>
-                    <CardTitle className="text-base text-balance">{title}</CardTitle>
-                    <CardDescription className="mt-1 text-pretty">{description}</CardDescription>
-                </div>
-            </div>
-        </CardHeader>
-        <CardContent className="chart-container">
-            {children}
-        </CardContent>
-    </Card>
-);
-
 // Chart icons
 const LineChartIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 3v18h18" />
         <path d="m19 9-5 5-4-4-3 3" />
     </svg>
 );
 
 const BarChartIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="12" y1="20" x2="12" y2="10" />
         <line x1="18" y1="20" x2="18" y2="4" />
         <line x1="6" y1="20" x2="6" y2="16" />
@@ -137,22 +111,98 @@ const BarChartIcon = () => (
 );
 
 const CostIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="12" y1="1" x2="12" y2="23" />
         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
     </svg>
 );
 
 const StackIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <ellipse cx="12" cy="5" rx="9" ry="3" />
         <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
         <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
     </svg>
 );
 
+// Log Scale Toggle Component
+const LogScaleToggle: React.FC<{
+    enabled: boolean;
+    onChange: (enabled: boolean) => void;
+    label: string;
+}> = ({ enabled, onChange, label }) => (
+    <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+        <div className="relative">
+            <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(e) => onChange(e.target.checked)}
+                className="sr-only peer"
+            />
+            <div className="w-10 h-5 bg-secondary/60 border border-border/40 rounded-full peer peer-checked:bg-primary/80 peer-checked:border-primary/60 transition-all duration-200" />
+            <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-muted-foreground/60 rounded-full peer-checked:translate-x-5 peer-checked:bg-white transition-all duration-200 shadow-sm" />
+        </div>
+        <span className="text-sm font-medium text-muted-foreground peer-checked:text-foreground">
+            {label}
+        </span>
+    </label>
+);
+
+// Tab configuration type
+type ChartTabKey = 'portfolioValue' | 'assetAccumulated' | 'avgCostBasis' | 'periodInvestment';
+
+interface ChartTabConfig {
+    key: ChartTabKey;
+    titleKey: string;
+    descriptionKey: string;
+    tabLabelKey: string;
+    icon: React.ReactNode;
+    dataKey?: 'portfolioValue' | 'assetAccumulated' | 'averageCostBasis';
+    isBarChart?: boolean;
+}
+
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isLoading }) => {
     const { language, t } = useLanguage();
+    const [useLogScale, setUseLogScale] = useState(false);
+    const [activeTab, setActiveTab] = useState<ChartTabKey>('portfolioValue');
+
+    // Chart tab configurations
+    const chartTabs: ChartTabConfig[] = [
+        {
+            key: 'portfolioValue',
+            titleKey: 'results.charts.portfolioValueTitle',
+            descriptionKey: 'results.charts.portfolioValueDescription',
+            tabLabelKey: 'results.charts.tabPortfolioValue',
+            icon: <LineChartIcon />,
+            dataKey: 'portfolioValue',
+        },
+        {
+            key: 'assetAccumulated',
+            titleKey: 'results.charts.assetAccumulatedTitle',
+            descriptionKey: 'results.charts.assetAccumulatedDescription',
+            tabLabelKey: 'results.charts.tabAssetAccumulated',
+            icon: <StackIcon />,
+            dataKey: 'assetAccumulated',
+        },
+        {
+            key: 'avgCostBasis',
+            titleKey: 'results.charts.avgCostBasisTitle',
+            descriptionKey: 'results.charts.avgCostBasisDescription',
+            tabLabelKey: 'results.charts.tabAvgCostBasis',
+            icon: <CostIcon />,
+            dataKey: 'averageCostBasis',
+        },
+        {
+            key: 'periodInvestment',
+            titleKey: 'results.charts.periodInvestmentTitle',
+            descriptionKey: 'results.charts.periodInvestmentDescription',
+            tabLabelKey: 'results.charts.tabPeriodInvestment',
+            icon: <BarChartIcon />,
+            isBarChart: true,
+        },
+    ];
+
+    const activeTabConfig = chartTabs.find(tab => tab.key === activeTab) || chartTabs[0];
 
     if (isLoading) {
         return <div className="h-[600px] flex items-center justify-center"><LoadingSpinner /></div>;
@@ -198,40 +248,57 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results, isL
             {/* Comparison Table */}
             <ComparisonTable results={results} />
 
-            {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ChartCard
-                    title={t('results.charts.portfolioValueTitle')}
-                    description={t('results.charts.portfolioValueDescription')}
-                    icon={<LineChartIcon />}
-                >
-                    <PortfolioChart data={results} dataKey="portfolioValue" />
-                </ChartCard>
+            {/* Tabbed Charts */}
+            <Card className="glass-panel card-glow overflow-hidden">
+                <CardHeader className="pb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                                {activeTabConfig.icon}
+                            </div>
+                            <div>
+                                <CardDescription className="text-base text-balance">
+                                    {t(activeTabConfig.descriptionKey)}
+                                </CardDescription>
+                            </div>
+                        </div>
+                        {!activeTabConfig.isBarChart && (
+                            <LogScaleToggle
+                                enabled={useLogScale}
+                                onChange={setUseLogScale}
+                                label={t('results.charts.logScaleToggle') || 'Log Scale'}
+                            />
+                        )}
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                    <Tabs defaultValue="portfolioValue" className="w-full" onTabChange={setActiveTab}>
+                        <TabsList className="w-full sm:w-auto flex-wrap">
+                            {chartTabs.map(tab => (
+                                <TabsTrigger key={tab.key} value={tab.key} icon={tab.icon}>
+                                    {t(tab.tabLabelKey) || tab.key}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
 
-                <ChartCard
-                    title={t('results.charts.assetAccumulatedTitle') || t('results.charts.btcAccumulatedTitle')}
-                    description={t('results.charts.assetAccumulatedDescription') || t('results.charts.btcAccumulatedDescription')}
-                    icon={<StackIcon />}
-                >
-                    <PortfolioChart data={results} dataKey="assetAccumulated" />
-                </ChartCard>
+                        <TabsContent value="portfolioValue">
+                            <PortfolioChart data={results} dataKey="portfolioValue" useLogScale={useLogScale} />
+                        </TabsContent>
 
-                <ChartCard
-                    title={t('results.charts.avgCostBasisTitle')}
-                    description={t('results.charts.avgCostBasisDescription')}
-                    icon={<CostIcon />}
-                >
-                    <PortfolioChart data={results} dataKey="averageCostBasis" />
-                </ChartCard>
+                        <TabsContent value="assetAccumulated">
+                            <PortfolioChart data={results} dataKey="assetAccumulated" useLogScale={useLogScale} />
+                        </TabsContent>
 
-                <ChartCard
-                    title={t('results.charts.periodInvestmentTitle')}
-                    description={t('results.charts.periodInvestmentDescription')}
-                    icon={<BarChartIcon />}
-                >
-                    <InvestmentChart data={results} />
-                </ChartCard>
-            </div>
+                        <TabsContent value="avgCostBasis">
+                            <PortfolioChart data={results} dataKey="averageCostBasis" useLogScale={useLogScale} />
+                        </TabsContent>
+
+                        <TabsContent value="periodInvestment">
+                            <InvestmentChart data={results} />
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
+            </Card>
         </div>
     );
 };

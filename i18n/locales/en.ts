@@ -69,6 +69,11 @@ export const en = {
             avgCostBasisDescription: 'Compares your average buy price against the market price.',
             periodInvestmentTitle: 'Investment Amount per Period (USD)',
             periodInvestmentDescription: 'Visualizes the USD amount invested each period for each strategy.',
+            logScaleToggle: 'Log Scale',
+            tabPortfolioValue: 'Portfolio Value',
+            tabAssetAccumulated: 'Asset Accumulated',
+            tabAvgCostBasis: 'Avg Cost Basis',
+            tabPeriodInvestment: 'Period Investment',
         },
     },
     error: {

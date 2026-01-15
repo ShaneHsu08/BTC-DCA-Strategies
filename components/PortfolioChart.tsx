@@ -9,9 +9,10 @@ import { CHART_COLORS, CHART_STYLES, formatDateForChart, formatCurrencyAxis } fr
 interface PortfolioChartProps {
     data: StrategyResult[];
     dataKey: 'portfolioValue' | 'btcAccumulated' | 'assetAccumulated' | 'averageCostBasis';
+    useLogScale?: boolean;
 }
 
-export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey }) => {
+export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey, useLogScale = false }) => {
     const { language, getLocale } = useLanguage();
 
     if (!data || data.length === 0) {
@@ -34,7 +35,12 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
         };
         translatedData.forEach(strategy => {
             const actualKey = dataKey === 'btcAccumulated' ? 'assetAccumulated' : dataKey;
-            point[strategy.strategyName] = strategy.timeSeries[index][actualKey];
+            let value = strategy.timeSeries[index][actualKey];
+            // For log scale, replace 0 or negative values with a small positive number
+            if (useLogScale && value <= 0) {
+                value = 0.0001;
+            }
+            point[strategy.strategyName] = value;
         });
         return point;
     });
@@ -52,7 +58,7 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
     const locale = getLocale();
 
     return (
-        <div className="h-80 w-full">
+        <div className="h-[400px] w-full">
             <ResponsiveContainer>
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                     <defs>
@@ -78,6 +84,9 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ data, dataKey })
                         {...CHART_STYLES.yAxis}
                         tickFormatter={yAxisFormatter}
                         width={55}
+                        scale={useLogScale ? 'log' : 'auto'}
+                        domain={useLogScale ? ['auto', 'auto'] : [0, 'auto']}
+                        allowDataOverflow={useLogScale}
                     />
                     <Tooltip
                         {...CHART_STYLES.tooltip}

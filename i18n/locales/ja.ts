@@ -69,6 +69,11 @@ export const ja = {
             avgCostBasisDescription: 'あなたの平均購入価格と市場価格を比較します。',
             periodInvestmentTitle: '各期間投資額 (USD)',
             periodInvestmentDescription: '各戦略の各期間の投資額（USD）を可視化します。',
+            logScaleToggle: '対数スケール',
+            tabPortfolioValue: 'ポートフォリオ価値',
+            tabAssetAccumulated: '資産蓄積量',
+            tabAvgCostBasis: '平均取得価額',
+            tabPeriodInvestment: '期間投資額',
         },
     },
     error: {

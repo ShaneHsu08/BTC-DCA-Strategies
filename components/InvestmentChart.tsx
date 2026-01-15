@@ -46,7 +46,7 @@ export const InvestmentChart: React.FC<InvestmentChartProps> = ({ data }) => {
     const locale = getLocale();
 
     return (
-        <div className="h-80 w-full">
+        <div className="h-[400px] w-full">
             <ResponsiveContainer>
                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                     <defs>

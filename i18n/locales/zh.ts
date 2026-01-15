@@ -69,6 +69,11 @@ export const zh = {
             avgCostBasisDescription: '比较您的平均购买价格与市场价格。',
             periodInvestmentTitle: '每期投资金额 (USD)',
             periodInvestmentDescription: '可视化每种策略每期投资的美元金额。',
+            logScaleToggle: '对数刻度',
+            tabPortfolioValue: '投资组合价值',
+            tabAssetAccumulated: '累计资产',
+            tabAvgCostBasis: '平均成本',
+            tabPeriodInvestment: '每期投资',
         },
     },
     error: {

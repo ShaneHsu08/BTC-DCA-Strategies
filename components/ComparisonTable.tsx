@@ -76,7 +76,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
     return (
         <Card className="glass-panel overflow-hidden">
             <CardHeader className="relative">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
                         <TrendUpIcon />
                     </div>
@@ -208,7 +208,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ results }) => 
                 </div>
 
                 {/* Legend */}
-                <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2.5 mt-2.5 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                         <CrownIcon className="text-amber-500" />
                         <span>Best performer</span>
