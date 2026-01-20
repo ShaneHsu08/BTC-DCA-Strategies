@@ -34,7 +34,7 @@ In short, the prerequisite for DCA in any asset is that you are optimistic about
 The biggest enemy of DCA is not the market, but giving up halfway. The key is to choose a strategy that you can execute long-term and stress-free, and then stick to it like eating and sleeping.
 
 ## About This Application
-- Initial release includes BTC data from 2011-01-03 to 2025-09-15. Please select backtest dates within this range. The next version will support real-time data.
+- Uses real historical price data from Yahoo Finance (2015-present) via a custom backend API.
 - Supports flexible investment frequencies: Daily, Weekly, or Monthly. Choose the schedule that best suits your lifestyle and cash flow.
 - Transaction fees are not considered for now.
 - Results are for reference only.
@@ -42,15 +42,27 @@ The biggest enemy of DCA is not the market, but giving up halfway. The key is to
 
 ## Features
 
-### Supported Assets
-- **Cryptocurrency**: Bitcoin (BTC)
-- **Global Equities**:
+### Supported Assets (22 Total)
+- **Cryptocurrency**: Bitcoin (BTC), Ethereum (ETH), BNB, Solana (SOL), XRP, Litecoin (LTC)
+- **Global Equity**:
   - Vanguard FTSE All-World UCITS ETF (VWRA)
-  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - iShares Core MSCI World UCITS ETF (IWDA)
   - Vanguard Total World Stock ETF (VT)
-- **Commodities**: SPDR Gold Shares (GLD)
-- **Thematic**: Invesco QQQ Trust (QQQ)
-- *More assets can be easily added via the registry.*
+  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - Vanguard Total Stock Market ETF (VTI)
+  - iShares STOXX Europe 600 UCITS ETF (EXSA)
+  - Vanguard FTSE Emerging Markets ETF (VWO)
+- **Fixed Income (Bonds)**:
+  - Vanguard Total Bond Market ETF (BND)
+  - iShares J.P. Morgan USD EM Bond ETF (EMB)
+- **Commodities**:
+  - SPDR Gold Shares (GLD)
+  - Invesco DB Commodity Index Tracking Fund (DBC)
+- **Real Estate (REITs)**: Vanguard Real Estate ETF (VNQ)
+- **Thematic & Sector**:
+  - Invesco QQQ Trust (QQQ)
+  - iShares Global Clean Energy ETF (ICLN)
+  - Vanguard FTSE All-World High Dividend Yield ETF (VHYL)
 
 ### Core Features
 - **Standard DCA**: Fixed-amount periodic investment strategy
@@ -66,54 +78,85 @@ The biggest enemy of DCA is not the market, but giving up halfway. The key is to
 
 ## Tech Stack
 
-- **Frontend Framework**: React 19 + TypeScript
+### Frontend
+- **Framework**: React 19 + TypeScript
 - **Build Tool**: Vite
 - **UI Framework**: Tailwind CSS + ShadCN/UI
 - **Chart Library**: Recharts
 - **Internationalization**: Custom i18n solution
 
+### Backend
+- **Data Collector**: Python 3 + yfinance + pandas
+- **API Server**: Rust + axum + rusqlite
+- **Database**: SQLite
+
 ## Project Structure
 
 ```
 BTCStrategies/
-├── components/           # React components
-│   ├── ui/              # Basic UI components
-│   ├── Header.tsx       # Page header
-│   ├── InputForm.tsx    # Parameter input form
+├── backend/             # Backend services
+│   ├── collector/       # Python data collector
+│   │   ├── collector.py # Fetches data from Yahoo Finance
+│   │   ├── requirements.txt
+│   │   └── data.db      # SQLite database
+│   └── api-server/      # Rust API server
+│       ├── Cargo.toml
+│       └── src/main.rs  # HTTP server
+├── components/          # React components
+│   ├── ui/             # Basic UI components
+│   ├── Header.tsx      # Page header
+│   ├── InputForm.tsx   # Parameter input form
 │   ├── ResultsDashboard.tsx # Results display panel
 │   └── ...
-├── contexts/            # React contexts
-├── data/               # Static data
-│   ├── assetRegistry.ts # Asset definitions
-│   └── priceData.ts     # Historical price data for all assets
-├── i18n/               # Internationalization
-│   ├── locales/        # Language files
+├── contexts/           # React contexts
+├── data/              # Static data
+│   └── assetRegistry.ts # Asset definitions
+├── i18n/              # Internationalization
+│   ├── locales/       # Language files
 │   └── LanguageProvider.tsx
-├── services/           # Business logic
+├── services/          # Business logic
+│   ├── apiService.ts  # API client
 │   └── simulationService.ts # Strategy simulation service
-├── types.ts           # TypeScript type definitions
-└── utils.ts           # Utility functions
+├── types.ts          # TypeScript type definitions
+└── utils.ts          # Utility functions
 ```
 
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
+- Python 3.8+
+- Rust 1.70+ (for API server)
 
 ### Installation and Running
 
-1. **Install dependencies**:
+1. **Set up Python data collector**:
+   ```bash
+   cd backend/collector
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   python collector.py --full  # Fetch historical data
+   ```
+
+2. **Start Rust API server**:
+   ```bash
+   cd backend/api-server
+   cargo run --release
+   # Server runs on http://localhost:3001
+   ```
+
+3. **Install frontend dependencies**:
    ```bash
    npm install
    ```
 
-2. **Start development server**:
+4. **Start frontend development server**:
    ```bash
    npm run dev
    ```
 
-3. **Access the application**:
+5. **Access the application**:
    Open browser and visit `http://localhost:3000`
 
 ### Build for Production
@@ -160,8 +203,10 @@ Click the "Run Simulation" button, and the system will calculate the performance
 
 ## Data Description
 
-- Built-in historical price data for Bitcoin (2011-2025) and sample data for ETFs (2020-2025)
+- Real historical price data fetched from Yahoo Finance (2015-present)
+- Data stored in SQLite database and served via Rust API
 - Includes RSI technical indicator calculations for supported assets
+- Run `python collector.py` daily to update with latest prices
 
 ## Development Guide
 

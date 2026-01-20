@@ -4,7 +4,7 @@ import { InputForm } from './components/InputForm';
 import { ResultsDashboard } from './components/ResultsDashboard';
 import { runSimulation } from './services/simulationService';
 import type { SimulationParams, StrategyResult } from './types';
-import { getPriceDataForAsset } from './data/priceData';
+import { fetchPriceData } from './services/apiService';
 import { useLanguage } from './i18n/LanguageProvider';
 
 // Social icons
@@ -47,7 +47,7 @@ const App: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleRunSimulation = useCallback(() => {
+    const handleRunSimulation = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         setResults(null);
@@ -59,25 +59,23 @@ const App: React.FC = () => {
             return;
         }
 
-        setTimeout(() => {
-            try {
-                const priceData = getPriceDataForAsset(simulationParams.selectedAsset);
-                const simulationResults = runSimulation(simulationParams, priceData);
-                setResults(simulationResults);
-            } catch (e) {
-                if (e instanceof Error) {
-                    if (e.message.includes("Not enough data")) {
-                        setError(t('error.notEnoughData'));
-                    } else {
-                        setError(`${t('error.simulationFailed')}: ${e.message}`);
-                    }
+        try {
+            const priceData = await fetchPriceData(simulationParams.selectedAsset);
+            const simulationResults = runSimulation(simulationParams, priceData);
+            setResults(simulationResults);
+        } catch (e) {
+            if (e instanceof Error) {
+                if (e.message.includes("Not enough data")) {
+                    setError(t('error.notEnoughData'));
                 } else {
-                    setError(t('error.unknownError'));
+                    setError(`${t('error.simulationFailed')}: ${e.message}`);
                 }
-            } finally {
-                setIsLoading(false);
+            } else {
+                setError(t('error.unknownError'));
             }
-        }, 500);
+        } finally {
+            setIsLoading(false);
+        }
     }, [simulationParams, t]);
 
     return (

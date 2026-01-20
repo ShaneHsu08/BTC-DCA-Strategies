@@ -36,22 +36,34 @@
 定投最大的敌人不是市场，而是半途而废的自己。关键是选一个你能长期执行、无压力的策略，然后像吃饭睡觉一样坚持下去。
 
 ## 关于本程序
-- 首发版本，内置BTC从 2011-01-03 到 2025-09-15 的数据，选择回测时间时请在此范围内。下一版本将接入实时数据。
+- 使用来自Yahoo Finance的真实历史价格数据（2015年至今），通过自定义后端API提供服务。
 - 支持灵活的定投频率：每日、每周或每月。请选择最适合您生活方式和现金流的定投计划。
 - 暂时未考虑手续费。
 - 结果仅供参考。
 
 ## 功能特性
 
-### 支持的资产
-- **加密货币**: 比特币 (BTC)
+### 支持的资产（共22种）
+- **加密货币**: 比特币 (BTC), 以太坊 (ETH), BNB, Solana (SOL), XRP, 莱特币 (LTC)
 - **全球股票**:
   - Vanguard FTSE All-World UCITS ETF (VWRA)
-  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - iShares Core MSCI World UCITS ETF (IWDA)
   - Vanguard Total World Stock ETF (VT)
-- **大宗商品**: SPDR Gold Shares (GLD)
-- **主题投资**: Invesco QQQ Trust (QQQ)
-- *可通过注册表轻松添加更多资产*
+  - iShares Core S&P 500 UCITS ETF (CSPX)
+  - Vanguard Total Stock Market ETF (VTI)
+  - iShares STOXX Europe 600 UCITS ETF (EXSA)
+  - Vanguard FTSE Emerging Markets ETF (VWO)
+- **固定收益（债券）**:
+  - Vanguard Total Bond Market ETF (BND)
+  - iShares J.P. Morgan USD EM Bond ETF (EMB)
+- **大宗商品**:
+  - SPDR Gold Shares (GLD)
+  - Invesco DB Commodity Index Tracking Fund (DBC)
+- **房地产（REITs）**: Vanguard Real Estate ETF (VNQ)
+- **主题与行业**:
+  - Invesco QQQ Trust (QQQ)
+  - iShares Global Clean Energy ETF (ICLN)
+  - Vanguard FTSE All-World High Dividend Yield ETF (VHYL)
 
 ### 核心功能
 - **标准定投 (Standard DCA)**: 固定金额的定期投资策略
@@ -67,54 +79,85 @@
 
 ## 技术栈
 
-- **前端框架**: React 19 + TypeScript
+### 前端
+- **框架**: React 19 + TypeScript
 - **构建工具**: Vite
 - **UI框架**: Tailwind CSS + ShadCN/UI
 - **图表库**: Recharts
 - **国际化**: 自定义i18n解决方案
 
+### 后端
+- **数据采集器**: Python 3 + yfinance + pandas
+- **API服务器**: Rust + axum + rusqlite
+- **数据库**: SQLite
+
 ## 项目结构
 
 ```
 BTCStrategies/
-├── components/           # React组件
-│   ├── ui/              # 基础UI组件
-│   ├── Header.tsx       # 页面头部
-│   ├── InputForm.tsx    # 参数输入表单
+├── backend/             # 后端服务
+│   ├── collector/       # Python数据采集器
+│   │   ├── collector.py # 从Yahoo Finance获取数据
+│   │   ├── requirements.txt
+│   │   └── data.db      # SQLite数据库
+│   └── api-server/      # Rust API服务器
+│       ├── Cargo.toml
+│       └── src/main.rs  # HTTP服务器
+├── components/          # React组件
+│   ├── ui/             # 基础UI组件
+│   ├── Header.tsx      # 页面头部
+│   ├── InputForm.tsx   # 参数输入表单
 │   ├── ResultsDashboard.tsx # 结果展示面板
 │   └── ...
-├── contexts/            # React上下文
-├── data/               # 静态数据
-│   ├── assetRegistry.ts # 资产定义
-│   └── priceData.ts     # 所有资产的历史价格数据
-├── i18n/               # 国际化
-│   ├── locales/        # 语言文件
+├── contexts/           # React上下文
+├── data/              # 静态数据
+│   └── assetRegistry.ts # 资产定义
+├── i18n/              # 国际化
+│   ├── locales/       # 语言文件
 │   └── LanguageProvider.tsx
-├── services/           # 业务逻辑
+├── services/          # 业务逻辑
+│   ├── apiService.ts  # API客户端
 │   └── simulationService.ts # 策略模拟服务
-├── types.ts           # TypeScript类型定义
-└── utils.ts           # 工具函数
+├── types.ts          # TypeScript类型定义
+└── utils.ts          # 工具函数
 ```
 
 ## 快速开始
 
 ### 环境要求
-- Node.js 18+ 
-- npm 或 yarn
+- Node.js 18+
+- Python 3.8+
+- Rust 1.70+（用于API服务器）
 
 ### 安装和运行
 
-1. **安装依赖**:
+1. **设置Python数据采集器**:
+   ```bash
+   cd backend/collector
+   python3 -m venv venv
+   source venv/bin/activate  # Windows系统: venv\Scripts\activate
+   pip install -r requirements.txt
+   python collector.py --full  # 获取历史数据
+   ```
+
+2. **启动Rust API服务器**:
+   ```bash
+   cd backend/api-server
+   cargo run --release
+   # 服务器运行在 http://localhost:3001
+   ```
+
+3. **安装前端依赖**:
    ```bash
    npm install
    ```
 
-2. **启动开发服务器**:
+4. **启动前端开发服务器**:
    ```bash
    npm run dev
    ```
 
-3. **访问应用**:
+5. **访问应用**:
    打开浏览器访问 `http://localhost:3000`
 
 ### 构建生产版本
@@ -160,8 +203,10 @@ npm run build
 
 ## 数据说明
 
-- 内置比特币历史价格数据 (2011-2025) 和 ETF 样本数据 (2020-2025)
+- 使用从Yahoo Finance获取的真实历史价格数据（2015年至今）
+- 数据存储在SQLite数据库中，通过Rust API提供服务
 - 包含支持资产的RSI技术指标计算
+- 每日运行 `python collector.py` 以更新最新价格
 
 ## 开发说明
 
