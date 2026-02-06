@@ -3,7 +3,7 @@ export type InvestmentFrequency = 'daily' | 'weekly' | 'monthly';
 export interface PriceDataPoint {
     date: string;
     close: number;
-    rsi: number;
+    rsi?: number;
 }
 
 export interface SimulationParams {

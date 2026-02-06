@@ -4,18 +4,21 @@
 //! Endpoint: GET /api/history/:symbol
 
 use axum::{
+    Router,
     extract::{Path, State},
-    http::StatusCode,
+    http::{
+        HeaderValue, Method, StatusCode,
+        header::{ACCEPT, CONTENT_TYPE},
+    },
     response::Json,
     routing::get,
-    Router,
 };
 use rusqlite::Connection;
 use serde::Serialize;
-use std::path::PathBuf;
 use std::sync::Arc;
-use tower_http::cors::{Any, CorsLayer};
-use tracing::info;
+use std::{env, path::PathBuf};
+use tower_http::cors::CorsLayer;
+use tracing::{error, info, warn};
 
 /// Price data point returned by the API
 #[derive(Debug, Serialize)]
@@ -28,6 +31,32 @@ struct PriceDataPoint {
 /// Application state holding the database connection
 struct AppState {
     db_path: PathBuf,
+}
+
+fn parse_allowed_origins() -> Vec<HeaderValue> {
+    let default_origins = "http://localhost:3000,http://127.0.0.1:3000,https://dca.btc.sv";
+    let raw_origins = env::var("ALLOWED_ORIGINS").unwrap_or_else(|_| default_origins.to_string());
+
+    raw_origins
+        .split(',')
+        .filter_map(|origin| {
+            let trimmed = origin.trim();
+            if trimmed.is_empty() {
+                return None;
+            }
+
+            match HeaderValue::from_str(trimmed) {
+                Ok(value) => Some(value),
+                Err(e) => {
+                    warn!(
+                        "Ignoring invalid ALLOWED_ORIGINS entry '{}': {}",
+                        trimmed, e
+                    );
+                    None
+                }
+            }
+        })
+        .collect()
 }
 
 /// Health check endpoint
@@ -43,18 +72,12 @@ async fn get_history(
     // Validate symbol
     let valid_symbols = [
         // Crypto
-        "BTC", "ETH", "BNB", "SOL", "XRP", "LTC",
-        // Global Equity
-        "VWRA", "IWDA", "VT",
-        // Regional Equity
-        "CSPX", "VTI", "EXSA", "VWO",
-        // Fixed Income (Bonds)
-        "BND", "EMB",
-        // Commodities
-        "GLD", "DBC",
-        // Real Estate (REITs)
-        "VNQ",
-        // Thematic & Sector
+        "BTC", "ETH", "BNB", "SOL", "XRP", "LTC", // Global Equity
+        "VWRA", "IWDA", "VT", // Regional Equity
+        "CSPX", "VTI", "EXSA", "VWO", // Fixed Income (Bonds)
+        "BND", "EMB", // Commodities
+        "GLD", "DBC", // Real Estate (REITs)
+        "VNQ", // Thematic & Sector
         "QQQ", "ICLN", "VHYL",
     ];
     let symbol_upper = symbol.to_uppercase();
@@ -62,15 +85,16 @@ async fn get_history(
     if !valid_symbols.contains(&symbol_upper.as_str()) {
         return Err((
             StatusCode::BAD_REQUEST,
-            format!("Invalid symbol: {}. Valid symbols: {:?}", symbol, valid_symbols),
+            format!("Invalid symbol: {}", symbol),
         ));
     }
 
     // Open database connection
     let conn = Connection::open(&state.db_path).map_err(|e| {
+        error!("Database open error ({}): {}", state.db_path.display(), e);
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Database error: {}", e),
+            "Internal server error".to_string(),
         )
     })?;
 
@@ -78,9 +102,10 @@ async fn get_history(
     let mut stmt = conn
         .prepare("SELECT date, close, rsi FROM price_data WHERE symbol = ? ORDER BY date ASC")
         .map_err(|e| {
+            error!("Database prepare error for {}: {}", symbol_upper, e);
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Query error: {}", e),
+                "Internal server error".to_string(),
             )
         })?;
 
@@ -93,15 +118,26 @@ async fn get_history(
             })
         })
         .map_err(|e| {
+            error!("Database query error for {}: {}", symbol_upper, e);
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Query execution error: {}", e),
+                "Internal server error".to_string(),
             )
         })?;
 
-    let data: Vec<PriceDataPoint> = rows
-        .filter_map(|r| r.ok())
-        .collect();
+    let mut data = Vec::new();
+    for row in rows {
+        match row {
+            Ok(point) => data.push(point),
+            Err(e) => {
+                error!("Row decode error for {}: {}", symbol_upper, e);
+                return Err((
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Internal server error".to_string(),
+                ));
+            }
+        }
+    }
 
     if data.is_empty() {
         return Err((
@@ -119,22 +155,29 @@ async fn main() {
     // Initialize tracing
     tracing_subscriber::fmt::init();
 
-    // Database path (relative to where the server is run from)
-    let db_path = PathBuf::from("../collector/data.db");
+    // Database path can be overridden for deployments/tests.
+    let default_db_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../collector/data.db");
+    let db_path = env::var("DB_PATH")
+        .map(PathBuf::from)
+        .unwrap_or(default_db_path);
 
     if !db_path.exists() {
-        eprintln!("Error: Database not found at {:?}", db_path);
-        eprintln!("Please run the Python collector first: cd ../collector && python collector.py --full");
+        error!("Database not found at {}", db_path.display());
+        error!("Run collector: cd ../collector && python collector.py --full");
         std::process::exit(1);
     }
 
     let state = Arc::new(AppState { db_path });
 
     // CORS configuration
+    let allowed_origins = parse_allowed_origins();
+    if allowed_origins.is_empty() {
+        warn!("No valid CORS origins configured via ALLOWED_ORIGINS");
+    }
     let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
+        .allow_origin(allowed_origins)
+        .allow_methods([Method::GET, Method::OPTIONS])
+        .allow_headers([ACCEPT, CONTENT_TYPE]);
 
     // Build router
     let app = Router::new()
@@ -143,12 +186,19 @@ async fn main() {
         .layer(cors)
         .with_state(state);
 
-    let addr = "0.0.0.0:3001";
-    info!("Starting API server on {}", addr);
-    println!("🚀 API server running at http://localhost:3001");
-    println!("   Health check: http://localhost:3001/health");
-    println!("   Example: http://localhost:3001/api/history/BTC");
+    let bind_addr = env::var("BIND_ADDR").unwrap_or_else(|_| "127.0.0.1:3001".to_string());
+    info!("Starting API server on {}", bind_addr);
 
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = match tokio::net::TcpListener::bind(&bind_addr).await {
+        Ok(listener) => listener,
+        Err(e) => {
+            error!("Failed to bind {}: {}", bind_addr, e);
+            std::process::exit(1);
+        }
+    };
+
+    if let Err(e) = axum::serve(listener, app).await {
+        error!("API server error: {}", e);
+        std::process::exit(1);
+    }
 }

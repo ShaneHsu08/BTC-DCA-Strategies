@@ -124,7 +124,7 @@ const SectionHeader: React.FC<{
                     </button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                    <p dangerouslySetInnerHTML={{ __html: tooltip }} />
+                    <p className="whitespace-pre-line text-sm leading-relaxed">{tooltip}</p>
                 </TooltipContent>
             </Tooltip>
         )}
